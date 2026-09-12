@@ -15,44 +15,53 @@
   },
   "meeting": {
     "title": "이사회 회의록",
-    "kind": "임시",
-    "date": "2020-03-04",
-    "start_time": "15:20",
-    "end_time": "16:00",
-    "place": "본점 소재지 본점 회의실",
+    "kind": "정기",
+    "date": "2019-01-08",
+    "start_time": "10:40",
+    "end_time": "11:15",
+    "place": "경상북도 포항시 남구 봉은사로 586, 30층 2220호 공장 관리동 회의실",
     "chair": {
-      "name": "임국준",
+      "name": "서재람",
       "title": "대표이사"
     },
     "secretary": null,
-    "total_directors": 4,
-    "present_directors": 4,
-    "total_auditors": 1,
-    "present_auditors": 1,
-    "notice_note": "본 이사회의 소집통지는 회의일 7일 전에 각 이사 및 감사에게 서면으로 발송되었다."
+    "total_directors": 5,
+    "present_directors": 5,
+    "total_auditors": 0,
+    "present_auditors": 0,
+    "notice_note": null
   },
   "directors": [
     {
-      "name": "임국준",
-      "hanja": "林國俊",
+      "name": "서재람",
+      "hanja": "徐在藍",
       "role": "사내이사",
       "title": "대표이사",
-      "present": true,
-      "mode": "출석",
-      "absence_reason": null
-    },
-    {
-      "name": "김호영",
-      "hanja": "金浩榮",
-      "role": "사내이사",
-      "title": "이사",
       "present": true,
       "mode": "원격",
       "absence_reason": null
     },
     {
-      "name": "차태범",
-      "hanja": "車泰範",
+      "name": "남태범",
+      "hanja": "南泰範",
+      "role": "사내이사",
+      "title": "각자대표이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    },
+    {
+      "name": "손은숙",
+      "hanja": "孫恩淑",
+      "role": "기타비상무이사",
+      "title": "이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    },
+    {
+      "name": "신현",
+      "hanja": "申賢",
       "role": "사내이사",
       "title": "이사",
       "present": true,
@@ -60,119 +69,70 @@
       "absence_reason": null
     },
     {
-      "name": "최영석",
-      "hanja": "崔榮錫",
-      "role": "사내이사",
+      "name": "성선호",
+      "hanja": "成善浩",
+      "role": "사외이사",
       "title": "이사",
       "present": true,
       "mode": "출석",
       "absence_reason": null
     }
   ],
-  "auditors": [
-    {
-      "name": "신현",
-      "role": "감사",
-      "title": "감사",
-      "present": true
-    }
-  ],
+  "auditors": [],
   "reports": [
-    "2020년 정보보호 점검 결과 보고"
+    "2019년 정보보호 점검 결과 보고"
   ],
   "agenda": [
     {
       "index": 1,
-      "kind": "third_party_issue",
-      "title": "제3자배정 방식에 의한 신주발행의 건",
+      "kind": "financial_statements",
+      "title": "제24기(2018. 1. 1. ~ 2018. 12. 31.) 재무제표 및 영업보고서 승인의 건",
       "facts": {
-        "new_shares": 1084000,
-        "issue_price": 8000,
-        "total_amount": 8672000000,
-        "share_class": "기명식 전환우선주식",
-        "payment_date": "2020-03-27",
-        "allottees": [
-          {
-            "name": "대한에너지 주식회사",
-            "shares": 1084000,
-            "amount": 8672000000
-          }
-        ]
+        "term_no": 24,
+        "fiscal_year": 2018,
+        "assets": 1296245000000,
+        "liabilities": 720377000000,
+        "equity": 575868000000,
+        "revenue": 347085000000,
+        "operating_income": 30543000000,
+        "net_income": 21000000000
       },
       "vote": {
-        "eligible": 4,
-        "present": 4,
-        "favor": 4,
+        "eligible": 5,
+        "present": 5,
+        "favor": 5,
         "against": 0,
         "abstain": 0,
-        "result": "수정가결",
+        "result": "원안가결",
         "unanimous": true,
         "excluded_director": null
       }
     },
     {
       "index": 2,
-      "kind": "regulation",
-      "title": "인사규정 개정의 건",
+      "kind": "third_party_issue",
+      "title": "신주발행(제3자배정 유상증자)의 건",
       "facts": {
-        "regulation": "인사규정",
-        "action": "개정",
-        "items": [
-          "겸직 승인 절차 명문화",
-          "내부신고 접수 및 처리 절차 신설"
-        ],
-        "effective_date": "2020-04-06"
+        "new_shares": 1022000,
+        "issue_price": 10000,
+        "total_amount": 10220000000,
+        "share_class": "기명식 보통주식",
+        "payment_date": "2019-01-26",
+        "allottees": [
+          {
+            "name": "블루소재 주식회사",
+            "shares": 1022000,
+            "amount": 10220000000
+          }
+        ]
       },
       "vote": {
-        "eligible": 4,
-        "present": 4,
-        "favor": 3,
-        "against": 0,
-        "abstain": 1,
-        "result": "원안가결",
-        "unanimous": false,
-        "excluded_director": null
-      }
-    },
-    {
-      "index": 3,
-      "kind": "borrowing",
-      "title": "주식회사 신한은행로부터의 자금 차입의 건",
-      "facts": {
-        "lender": "주식회사 신한은행",
-        "limit": 39600000000,
-        "rate": 4.42,
-        "months": 12,
-        "loan_type": "운전자금대출"
-      },
-      "vote": {
-        "eligible": 4,
-        "present": 4,
-        "favor": 3,
-        "against": 1,
-        "abstain": 0,
-        "result": "원안가결",
-        "unanimous": false,
-        "excluded_director": null
-      }
-    },
-    {
-      "index": 4,
-      "kind": "guarantee",
-      "title": "계열회사(주식회사 미래스마트중공업)에 대한 지급보증의 건",
-      "facts": {
-        "guarantee_for": "주식회사 미래스마트중공업",
-        "creditor": "한국수출입은행",
-        "amount": 10500000000,
-        "months": 12
-      },
-      "vote": {
-        "eligible": 4,
-        "present": 4,
-        "favor": 4,
+        "eligible": 5,
+        "present": 5,
+        "favor": 5,
         "against": 0,
         "abstain": 0,
-        "result": "원안가결",
+        "result": "수정가결",
         "unanimous": true,
         "excluded_director": null
       }
@@ -180,30 +140,29 @@
   ],
   "signers": [
     {
-      "name": "임국준",
+      "name": "서재람",
       "title": "대표이사"
     },
     {
-      "name": "김호영",
-      "title": "이사"
+      "name": "남태범",
+      "title": "각자대표이사"
     },
     {
-      "name": "차태범",
-      "title": "이사"
-    },
-    {
-      "name": "최영석",
+      "name": "손은숙",
       "title": "이사"
     },
     {
       "name": "신현",
-      "title": "감사"
+      "title": "이사"
+    },
+    {
+      "name": "성선호",
+      "title": "이사"
     }
   ],
   "attachments": [
-    "여신거래약정서(안) 1부",
-    "재무제표 및 영업보고서 1부",
-    "감정평가서 사본 1부"
+    "감정평가서 사본 1부",
+    "여신거래약정서(안) 1부"
   ],
   "style": {
     "ending": "yeoss",

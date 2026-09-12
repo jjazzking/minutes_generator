@@ -416,7 +416,7 @@ def ag_borrowing(ctx: Ctx) -> AgendaItem:
     kind = rng.choice(["운전자금대출", "시설자금대출", "한도대출(마이너스통장)", "일반자금대출", "산업운영자금대출"])
     return AgendaItem(
         kind="borrowing",
-        title=f"{bank}로부터의 자금 차입의 건",
+        title=f"{bank}(으)로부터의 자금 차입의 건",
         blocks=[
             P(f"의장은 {rng.choice(['원자재 구매대금 결제', '신규 설비 도입', '기존 차입금 대환', '운영자금 확보'])}를 위하여 "
               f"다음과 같이 금융기관으로부터 자금을 차입할 필요가 있음을 설명하였다."),
@@ -784,4 +784,31 @@ WEIGHTS: Dict[str, float] = {
     "real_estate": 5, "stock_option": 5, "related_party": 5,
     "regulation": 5, "treasury_stock": 3, "interim_dividend": 3,
     "guarantee": 4, "new_business": 4, "remuneration": 4, "subsidiary": 3,
+}
+
+
+# 화면에 보여줄 한글 이름.
+KIND_LABELS: Dict[str, str] = {
+    "third_party_issue": "유상증자(제3자배정)",
+    "convertible_bond": "전환사채 발행",
+    "warrant_bond": "신주인수권부사채 발행",
+    "ceo_election": "대표이사 선임",
+    "agm_convocation": "정기주주총회 소집",
+    "egm_convocation": "임시주주총회 소집",
+    "financial_statements": "재무제표 승인",
+    "branch": "지점 설치·이전·폐지",
+    "head_office_move": "본점 이전",
+    "articles_amendment": "정관 변경",
+    "borrowing": "금융기관 차입",
+    "equity_investment": "타법인 주식 취득",
+    "real_estate": "부동산 취득·처분",
+    "stock_option": "주식매수선택권 부여",
+    "related_party": "이사와 회사 간 거래(제398조)",
+    "regulation": "사내규정 제·개정",
+    "treasury_stock": "자기주식 취득",
+    "interim_dividend": "중간배당",
+    "guarantee": "지급보증",
+    "new_business": "사업목적 추가",
+    "remuneration": "임원 보수 지급기준",
+    "subsidiary": "자회사 설립",
 }

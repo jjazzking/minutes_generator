@@ -69,6 +69,12 @@ class Style:
     attendance_layout: str = "inline"   # inline / roster / both
     spaced_labels: bool = True          # "일    시" 처럼 라벨 안에 공백을 넣는지
     numbering: str = "hangul"           # hangul: 가. 나. / arabic: 1. 2.
+    font_family: str = "gothic"         # gothic: 고딕 계열 / myeongjo: 명조·바탕 계열
+    font_size: float = 10.5             # 본문 글자 크기(pt)
+    leading_ratio: float = 1.6          # 행간 배수
+    page_border: bool = False           # 본문 외곽 테두리
+    title_underline: bool = False       # 제목 밑줄
+    text_align: str = "justify"         # justify: 양쪽 정렬 / left: 왼쪽 정렬
 
     # ----- 포맷터 -----
 

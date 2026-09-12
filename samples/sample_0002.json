@@ -16,36 +16,27 @@
   "meeting": {
     "title": "이 사 회 의 사 록",
     "kind": "임시",
-    "date": "2020-05-07",
-    "start_time": "14:50",
-    "end_time": "15:10",
-    "place": "대전광역시 대덕구 대왕판교로 311(연구소) 회의실",
+    "date": "2024-03-20",
+    "start_time": "10:20",
+    "end_time": "10:45",
+    "place": "경기도 부천시 과학로 50, 27층 315호 서울사무소 회의실",
     "chair": {
-      "name": "임준율",
+      "name": "주서현",
       "title": "대표이사"
     },
-    "secretary": null,
-    "total_directors": 5,
-    "present_directors": 5,
-    "total_auditors": 0,
-    "present_auditors": 0,
-    "notice_note": "본 이사회의 소집통지는 회의일 7일 전에 각 이사 및 감사에게 서면 및 전자우편으로 발송되었다."
+    "secretary": "안진람",
+    "total_directors": 6,
+    "present_directors": 4,
+    "total_auditors": 2,
+    "present_auditors": 2,
+    "notice_note": null
   },
   "directors": [
     {
-      "name": "임준율",
-      "hanja": "林俊律",
+      "name": "주서현",
+      "hanja": "朱瑞賢",
       "role": "사내이사",
       "title": "대표이사",
-      "present": true,
-      "mode": "출석",
-      "absence_reason": null
-    },
-    {
-      "name": "강광민",
-      "hanja": "姜光敏",
-      "role": "사내이사",
-      "title": "이사",
       "present": true,
       "mode": "원격",
       "absence_reason": null
@@ -54,14 +45,14 @@
       "name": "강준빈",
       "hanja": "姜俊彬",
       "role": "사내이사",
-      "title": "이사",
+      "title": "각자대표이사",
       "present": true,
       "mode": "출석",
       "absence_reason": null
     },
     {
-      "name": "하민연",
-      "hanja": "河敏娟",
+      "name": "송현준",
+      "hanja": "宋賢俊",
       "role": "사내이사",
       "title": "이사",
       "present": true,
@@ -69,38 +60,67 @@
       "absence_reason": null
     },
     {
-      "name": "오은건",
-      "hanja": "吳恩建",
+      "name": "윤예진",
+      "hanja": "尹睿鎭",
+      "role": "사내이사",
+      "title": "이사",
+      "present": false,
+      "mode": "불참",
+      "absence_reason": "사전 통보 후 불참"
+    },
+    {
+      "name": "김현희",
+      "hanja": "金賢姬",
+      "role": "사외이사",
+      "title": "이사",
+      "present": false,
+      "mode": "불참",
+      "absence_reason": "해외 출장"
+    },
+    {
+      "name": "홍선철",
+      "hanja": "洪善哲",
       "role": "사내이사",
       "title": "이사",
       "present": true,
-      "mode": "출석",
+      "mode": "원격",
       "absence_reason": null
     }
   ],
-  "auditors": [],
-  "reports": [],
+  "auditors": [
+    {
+      "name": "배민웅",
+      "role": "감사",
+      "title": "감사",
+      "present": true
+    },
+    {
+      "name": "임빈",
+      "role": "감사",
+      "title": "상근감사",
+      "present": true
+    }
+  ],
+  "reports": [
+    "내부회계관리제도 운영실태 보고"
+  ],
   "agenda": [
     {
       "index": 1,
-      "kind": "convertible_bond",
-      "title": "제14회 무기명식 이권부 무보증 사모 전환사채 발행의 건",
+      "kind": "branch",
+      "title": "사무소 폐지의 건",
       "facts": {
-        "face_value": 30000000000,
-        "coupon_rate": 3.0,
-        "ytm": 5.0,
-        "conversion_price": 7500,
-        "convertible_shares": 4000000,
-        "issue_date": "2020-05-29",
-        "maturity_date": "2022-05-29",
-        "series": 14
+        "action": "폐지",
+        "branch_name": "천안사무소",
+        "address": "대전광역시 대덕구 대왕판교로 311",
+        "effective_date": "2024-04-07"
       },
       "vote": {
-        "eligible": 5,
-        "present": 5,
-        "favor": 4,
-        "against": 1,
-        "abstain": 0,
+        "eligible": 6,
+        "present": 4,
+        "favor": 3,
+        "against": 0,
+        "abstain": 1,
         "result": "원안가결",
         "unanimous": false,
         "excluded_director": null
@@ -109,31 +129,31 @@
   ],
   "signers": [
     {
-      "name": "임준율",
+      "name": "주서현",
       "title": "대표이사"
     },
     {
-      "name": "강광민",
-      "title": "이사"
-    },
-    {
       "name": "강준빈",
+      "title": "각자대표이사"
+    },
+    {
+      "name": "송현준",
       "title": "이사"
     },
     {
-      "name": "하민연",
+      "name": "홍선철",
       "title": "이사"
     },
     {
-      "name": "오은건",
-      "title": "이사"
+      "name": "배민웅",
+      "title": "감사"
+    },
+    {
+      "name": "임빈",
+      "title": "상근감사"
     }
   ],
-  "attachments": [
-    "여신거래약정서(안) 1부",
-    "재무제표 및 영업보고서 1부",
-    "이사회 부의안건 설명자료 1부"
-  ],
+  "attachments": [],
   "style": {
     "ending": "yeoss",
     "date_format": "dotted_pad",

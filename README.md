@@ -3,9 +3,27 @@
 모의 이사회 의사록을 무작위로 생성한다. 문서 본문(텍스트)과 정답셋(JSON)을 같은 시드에서 함께 만들어 내므로,
 OCR·문서 파싱 모델의 벤치마크 입력과 Ground Truth를 별도의 라벨링 없이 확보할 수 있다.
 
-표준 라이브러리만 사용하며 외부 의존성이 없다. Python 3.9 이상.
+Python 3.9 이상. 텍스트·JSON·HTML 출력과 브라우저 UI 는 표준 라이브러리만으로 동작하고,
+PDF 출력에만 `reportlab` 이 필요하다.
 
-## 사용법
+## 화면으로 쓰기
+
+```bash
+./run_ui.sh          # macOS, Linux
+run_ui.bat           # Windows (더블클릭)
+```
+
+처음 실행하면 가상환경을 만들고 `reportlab` 을 설치한 뒤 브라우저를 연다.
+왼쪽에서 시드와 의안 종류를 고르고 새 문서를 만들면 오른쪽에 실제 문서 모양으로 나온다.
+PDF·텍스트·정답셋을 한 건씩 내려받거나, 여러 건을 ZIP 으로 한꺼번에 받을 수 있다.
+
+이미 파이썬 환경이 있다면 다음과 같이 바로 열어도 된다.
+
+```bash
+python3 -m minutes_generator --ui
+```
+
+## 명령행 사용법
 
 ```bash
 # 한 건을 표준출력으로 (본문 + 정답셋)
@@ -14,12 +32,20 @@ python3 -m minutes_generator --seed 42
 # 500건을 디렉터리에 저장
 python3 -m minutes_generator --count 500 --seed 1000 --out ./out
 
+# PDF 까지 포함해 전부 저장 (reportlab 필요)
+python3 -m minutes_generator --count 100 --out ./out --format all
+
 # 본문만, 의안 종류와 개수를 고정
 python3 -m minutes_generator -n 20 -o ./out -f text --agenda borrowing,related_party
 
 # 지원하는 의안 종류 확인
 python3 -m minutes_generator --list-kinds
+
+# PDF 용 한글 글꼴을 찾을 수 있는지 확인
+python3 -m minutes_generator --check-fonts
 ```
+
+`--format` 은 `text`, `json`, `pdf`, `html`, `both`(text+json), `all` 중에서 고른다.
 
 라이브러리로 쓸 때는 다음 한 줄이면 된다.
 
@@ -58,6 +84,11 @@ OCR 난이도를 좌우하는 표기 규칙을 문서 단위로 하나씩 뽑아
 | 날인 | (인) / (印) / (서명) |
 | 상호 | 주식회사 / (주) / 株式會社 |
 | 시각 | 오후 2시 30분 / 14:30 |
+| 글꼴 | 고딕 계열 / 명조·바탕 계열 |
+| 글자 크기 | 10 / 10.5 / 11 / 12 pt |
+| 행간 | 1.45 ~ 1.8 배 |
+| 정렬 | 양쪽 정렬 / 왼쪽 정렬 |
+| 테두리 | 본문 외곽선 있음 / 없음 |
 
 출석 현황의 가로 배치(`이사 총수: 5명     출석 이사 수: 5명`)는 읽기 순서를 위에서 아래로 왜곡하는 모델을
 걸러 내기 위한 것이고, 한자 혼용과 금액 한글 병기는 문자 집합과 숫자 인식을 각각 압박한다.
@@ -80,6 +111,9 @@ OCR 난이도를 좌우하는 표기 규칙을 문서 단위로 하나씩 뽑아
 ```bash
 python3 -m unittest discover -s tests -t .
 ```
+
+`tests/test_output.py` 는 HTML 구조, PDF 생성, UI 의 모든 응답 경로를 확인한다.
+`reportlab` 이나 한글 글꼴이 없으면 해당 항목은 건너뛴다.
 
 ## 의안 종류 22종
 
@@ -108,23 +142,51 @@ style       해당 문서에 적용된 표기 규칙
 
 ```
 minutes_generator/
-  lexicon.py    인명·상호·주소·보고안건 등 어휘 풀
-  names.py      인명, 상호, 주소 생성
-  model.py      도메인 모델과 표기 스타일, 한글 수 표기
-  agenda.py     의안 22종 생성기와 등장 가중치
-  generator.py  회사·임원·회의체 구성과 표결
-  render.py     텍스트 렌더링, 조사 교정, 정답셋 추출
-  cli.py        명령행 진입점
+  lexicon.py      인명·상호·주소·보고안건 등 어휘 풀
+  names.py        인명, 상호, 주소 생성
+  model.py        도메인 모델과 표기 스타일, 한글 수 표기
+  agenda.py       의안 22종 생성기와 등장 가중치
+  generator.py    회사·임원·회의체 구성과 표결
+  render.py       의미 단위 흐름 생성, 텍스트 출력, 조사 교정, 정답셋 추출
+  html_render.py  HTML 출력
+  fonts.py        운영체제별 한글 글꼴 탐색
+  pdf.py          PDF 출력 (reportlab)
+  ui.py           브라우저 UI 서버
+  cli.py          명령행 진입점
 ```
 
-의안 본문은 문단·키값·표·목록 블록의 리스트로 만들어지므로, `render.py`의 텍스트 렌더러를 대체하면
-같은 문서를 다른 형식으로 출력할 수 있다.
+`render.build_flow` 가 제목·머리말·문단·표·서명란 같은 의미 단위 목록을 만들고,
+텍스트·HTML·PDF 렌더러가 그 하나를 공유한다. 형식이 달라도 내용은 어긋나지 않는다.
+출력 형식을 추가하려면 이 흐름을 소비하는 렌더러만 쓰면 된다.
+
+## PDF 출력
+
+`reportlab` 과 한글 글꼴이 있어야 한다.
+
+```bash
+pip install reportlab
+```
+
+글꼴은 운영체제 기본값을 자동으로 찾는다. Windows 는 맑은 고딕과 바탕, macOS 는 Apple SD Gothic Neo 와
+AppleMyungjo, Linux 는 나눔고딕과 나눔명조를 먼저 본다. 찾지 못하면 환경변수로 지정한다.
+
+```bash
+export MINUTES_FONT_GOTHIC=/path/to/NanumGothic.ttf
+export MINUTES_FONT_MYEONGJO=/path/to/NanumMyeongjo.ttf
+```
+
+Linux 에서 글꼴이 없다면 `sudo apt install fonts-nanum` 으로 설치하면 된다.
+`--check-fonts` 가 현재 상태를 알려준다.
+
+PDF 없이도 UI 에서 "인쇄 / PDF 로 저장" 을 누르면 브라우저의 인쇄 기능으로 PDF 를 만들 수 있다.
+이 경로는 추가 설치가 필요 없다.
 
 ## 아직 없는 것
 
-- PDF/이미지 출력. 현재 출력은 텍스트와 JSON이다.
 - 인영(도장) 이미지 합성, 스캔 노이즈 주입.
 - 바운딩 박스 좌표. 렌더러가 좌표를 만들지 않으므로 레이아웃 검출 평가에는 쓸 수 없다.
+  다만 본문이 의미 단위 흐름(`render.build_flow`)으로 만들어지므로, PDF 렌더러에서 좌표를 받아 적는 것은
+  가능하다.
 
 ## 라이선스
 

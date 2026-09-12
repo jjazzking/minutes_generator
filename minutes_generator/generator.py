@@ -125,6 +125,12 @@ def make_style(rng: random.Random) -> Style:
         attendance_layout=rng.choices(["inline", "roster", "both"], weights=[42, 26, 32])[0],
         spaced_labels=rng.random() < 0.5,
         numbering=rng.choices(["hangul", "arabic"], weights=[55, 45])[0],
+        font_family=rng.choices(["gothic", "myeongjo"], weights=[58, 42])[0],
+        font_size=rng.choice([10.0, 10.5, 10.5, 11.0, 11.0, 12.0]),
+        leading_ratio=rng.choice([1.45, 1.55, 1.6, 1.7, 1.8]),
+        page_border=rng.random() < 0.22,
+        title_underline=rng.random() < 0.3,
+        text_align=rng.choices(["justify", "left"], weights=[62, 38])[0],
     )
 
 
@@ -176,14 +182,18 @@ def make_vote(rng: random.Random, item: AgendaItem, directors: List[Officer]) ->
 def make_reports(rng: random.Random, ctx: Ctx) -> List[ReportItem]:
     n = rng.choices([0, 1, 1, 2, 3], weights=[38, 26, 14, 15, 7])[0]
     out: List[ReportItem] = []
-    for topic in rng.sample(lx.REPORT_TOPICS, n):
+    phrasings = [
+        "{who}이(가) 위 사항을 보고하였고, 이사회는 이를 청취하였다.",
+        "담당 임원이 배부된 자료에 따라 보고하였으며, 이사회는 질의응답을 거쳐 보고를 접수하였다.",
+        "의장이 요약 보고하였고 별도의 이의 제기는 없었다.",
+        "{who}이(가) 보고한 후 이사들의 질의에 답변하였다.",
+        "보고 내용에 대하여 이사 전원이 이의 없이 이를 확인하였다.",
+    ]
+    picked = rng.sample(phrasings, min(n, len(phrasings))) if n else []
+    for idx, topic in enumerate(rng.sample(lx.REPORT_TOPICS, n)):
         title = topic.format(q=rng.randint(1, 4), y=ctx.meeting_date.year)
-        blocks = [P(rng.choice([
-            f"{rng.choice(['경영지원실장', '재무팀장', '내부감사팀장', '준법지원인', '경영기획팀장'])}이(가) "
-            f"위 사항을 보고하였고, 이사회는 이를 청취하였다.",
-            "담당 임원이 배부된 자료에 따라 보고하였으며, 이사회는 질의응답을 거쳐 보고를 접수하였다.",
-            "의장이 요약 보고하였고 별도의 이의 제기는 없었다.",
-        ]))]
+        who = rng.choice(["경영지원실장", "재무팀장", "내부감사팀장", "준법지원인", "경영기획팀장"])
+        blocks = [P(picked[idx].format(who=who))]
         if rng.random() < 0.35:
             blocks.append(LST(rng.sample([
                 "전년 동기 대비 매출 증감 요인",

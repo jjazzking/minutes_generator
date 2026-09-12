@@ -5,9 +5,11 @@ import random
 import re
 import unicodedata
 from datetime import datetime, timedelta
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
-from .model import Block, Minutes, Officer, Style, Vote, comma
+Block = Tuple[str, Any]
+
+from .model import Minutes, Officer, Style, Vote, comma
 
 HANGUL_ORDER = ["가", "나", "다", "라", "마", "바", "사", "아", "자", "차", "카", "타"]
 PAGE_WIDTH = 68
@@ -110,10 +112,15 @@ def fix_josa(text: str) -> str:
     return _JOSA_RE.sub(sub, text)
 
 
-def _marker(style: Style, i: int) -> str:
-    if style.numbering == "arabic":
+def _marker(style: Style, i: int, scheme: str = None) -> str:
+    if (scheme or style.numbering) == "arabic":
         return f"{i}."
     return f"{HANGUL_ORDER[(i - 1) % len(HANGUL_ORDER)]}."
+
+
+def _report_scheme(style: Style) -> str:
+    """의안 번호가 '1.' 형식이면 보고사항은 가·나·다로 구분한다."""
+    return "hangul" if style.agenda_label == "num" else style.numbering
 
 
 def _label(style: Style, text: str, width: int = 8) -> str:
@@ -244,110 +251,150 @@ def _certification(m: Minutes, rng: random.Random) -> str:
     ])
 
 
-# ---------------------------------------------------------------- 본문 조립
+# ---------------------------------------------------------------- 문서 흐름
 
-def render_text(m: Minutes, seed: int = 0) -> str:
+def build_flow(m: Minutes, seed: int = 0) -> List[Block]:
+    """렌더러가 공유하는 의미 단위 목록을 만든다.
+
+    텍스트·HTML·PDF 출력이 같은 흐름을 소비하므로 서로 내용이 어긋나지 않는다.
+    """
     rng = random.Random(seed ^ 0x5EED)
     s = m.style
-    L: List[str] = []
-    L.append(_center(s.doc_title))
-    L.append("")
-    L.append("")
+    F: List[Block] = [("title", fix_josa(s.doc_title))]
 
-    idx = 1
-    L.append(f"{_marker(s, idx)} {_label(s, '상호')}: {m.company.full_name(s)}")
-    idx += 1
-    L.append(f"{_marker(s, idx)} {_label(s, '일시')}: {s.fmt_date(m.meeting_date)} "
-             f"{s.fmt_time(m.start_time)}")
-    idx += 1
-    L.append(f"{_marker(s, idx)} {_label(s, '장소')}: {m.place}")
-    idx += 1
+    header: List[Dict[str, Any]] = [
+        {"label": "상호", "value": m.company.full_name(s)},
+        {"label": "일시", "value": f"{s.fmt_date(m.meeting_date)} {s.fmt_time(m.start_time)}"},
+        {"label": "장소", "value": m.place},
+    ]
 
     n_dir, p_dir = len(m.directors), m.present_directors
     n_aud = len(m.auditors)
     p_aud = sum(1 for a in m.auditors if a.present)
-    L.append(f"{_marker(s, idx)} {_label(s, '출석현황')}:")
+    att: Dict[str, Any] = {"label": "출석현황", "value": "", "lines": [], "roster": []}
     if s.attendance_layout in ("inline", "both"):
-        L.append(f"     이사 총수: {n_dir}명     출석 이사 수: {p_dir}명")
+        att["lines"].append(f"이사 총수: {n_dir}명     출석 이사 수: {p_dir}명")
         if n_aud:
-            L.append(f"     감사 총수: {n_aud}명     출석 감사 수: {p_aud}명")
-        absentees = [d for d in m.directors if not d.present] + \
-                    [a for a in m.auditors if not a.present]
-        if absentees and s.attendance_layout == "inline":
-            for o in absentees:
-                L.append(f"     불참: {o.title} {o.display(s)}({o.absence_reason})")
+            att["lines"].append(f"감사 총수: {n_aud}명     출석 감사 수: {p_aud}명")
+        if s.attendance_layout == "inline":
+            for o in [d for d in m.directors if not d.present] + \
+                     [a for a in m.auditors if not a.present]:
+                att["lines"].append(f"불참: {o.title} {o.display(s)}({o.absence_reason})")
     if s.attendance_layout in ("roster", "both"):
         for d in m.directors:
             mark = "출석" if d.attend_mode == "출석" else (
                 "원격출석(화상회의)" if d.attend_mode == "원격" else f"불참({d.absence_reason})")
-            L.append(f"     {_pad(d.title, 14)}{_pad(d.display(s), 16)}{mark}")
+            att["roster"].append((d.title, d.display(s), mark))
         for a in m.auditors:
             mark = "출석" if a.present else f"불참({a.absence_reason})"
-            L.append(f"     {_pad(a.title, 14)}{_pad(a.display(s), 16)}{mark}")
-    idx += 1
-    L.append(f"{_marker(s, idx)} {_label(s, '의장')}: {m.chair.title} {m.chair.display(s)}")
-    idx += 1
+            att["roster"].append((a.title, a.display(s), mark))
+    header.append(att)
+    header.append({"label": "의장", "value": f"{m.chair.title} {m.chair.display(s)}"})
     if m.secretary:
-        L.append(f"{_marker(s, idx)} {_label(s, '간사')}: {m.secretary.title} "
-                 f"{m.secretary.display(s)}")
-        idx += 1
-    L.append("")
+        header.append({"label": "간사",
+                       "value": f"{m.secretary.title} {m.secretary.display(s)}"})
+    F.append(("header", header))
 
     if m.notice_note:
-        L += _wrap(m.notice_note, PAGE_WIDTH, "")
-        L.append("")
+        F.append(("para", fix_josa(m.notice_note)))
     if m.chair_note:
-        L += _wrap(m.chair_note + ".", PAGE_WIDTH, "")
-        L.append("")
-
-    L += _wrap(_opening(m, rng), PAGE_WIDTH, "")
-    L.append("")
+        F.append(("para", fix_josa(m.chair_note + ".")))
+    F.append(("para", fix_josa(_opening(m, rng))))
 
     if m.reports:
-        L.append("[보고사항]")
-        L.append("")
+        F.append(("section", "보고사항"))
         for i, r in enumerate(m.reports, start=1):
-            L.append(f"{_marker(s, i)} {r.title}")
-            L += _render_blocks(r.blocks, s)
-        L.append("")
+            F.append(("item_heading",
+                      f"{_marker(s, i, _report_scheme(s))} {fix_josa(r.title)}"))
+            for kind, payload in r.blocks:
+                F.append(("indent_para" if kind == "para" else kind,
+                          _clean_block(kind, payload)))
 
     for i, (item, vote) in enumerate(m.agenda, start=1):
-        L.append(s.agenda_heading(i, item.title))
-        L.append("")
-        L += _render_blocks(item.blocks, s)
-        L += _wrap(_vote_sentence(vote, item, s, rng), PAGE_WIDTH, "   ")
-        L.append("")
+        F.append(("agenda_heading", fix_josa(s.agenda_heading(i, item.title))))
+        for kind, payload in item.blocks:
+            F.append(("indent_para" if kind == "para" else kind,
+                      _clean_block(kind, payload)))
+        F.append(("resolution", fix_josa(_vote_sentence(vote, item, s, rng))))
 
     if m.discussion:
-        L.append("[기타 토의사항]")
-        L.append("")
-        L += _wrap(m.discussion, PAGE_WIDTH, "   ")
-        L.append("")
+        F.append(("section", "기타 토의사항"))
+        F.append(("indent_para", fix_josa(m.discussion)))
 
-    L += _wrap(_closing(m, rng), PAGE_WIDTH, "")
-    L.append("")
-    L += _wrap(_certification(m, rng), PAGE_WIDTH, "")
-    L.append("")
-    L.append("")
-    L.append(_center(s.fmt_date(m.meeting_date)))
-    L.append("")
-    L.append(_center(m.company.full_name(s)))
-    L.append("")
-
-    for o in m.signers:
-        L.append(_center(f"{_pad(o.title, 14)}{_pad(o.display(s), 16)}{s.seal_mark}"))
-    L.append("")
-
+    F.append(("para", fix_josa(_closing(m, rng))))
+    F.append(("para", fix_josa(_certification(m, rng))))
+    F.append(("date", s.fmt_date(m.meeting_date)))
+    F.append(("company", m.company.full_name(s)))
+    F.append(("signs", [(o.title, o.display(s), s.seal_mark) for o in m.signers]))
     if m.attachments:
-        L.append("첨부서류")
-        for i, a in enumerate(m.attachments, start=1):
-            L.append(f"   {i}. {a}")
-        L.append("")
+        F.append(("attachments", list(m.attachments)))
+    return F
 
-    return fix_josa("\n".join(L).rstrip()) + "\n"
+
+def _clean_block(kind: str, payload):
+    if kind == "para":
+        return fix_josa(payload)
+    if kind == "kv":
+        return [(fix_josa(str(k)), fix_josa(str(v))) for k, v in payload]
+    if kind == "list":
+        return [fix_josa(str(x)) for x in payload]
+    if kind == "table":
+        header, rows = payload
+        return ([fix_josa(str(h)) for h in header],
+                [[fix_josa(str(c)) for c in r] for r in rows])
+    return payload
+
+
+# ---------------------------------------------------------------- 텍스트 출력
+
+def render_text(m: Minutes, seed: int = 0) -> str:
+    s = m.style
+    L: List[str] = []
+    body_indent = "   "
+
+    for kind, payload in build_flow(m, seed):
+        if kind == "title":
+            L += [_center(payload), "", ""]
+        elif kind == "header":
+            for i, entry in enumerate(payload, start=1):
+                label = f"{_marker(s, i)} {_label(s, entry['label'])}"
+                L.append(f"{label}: {entry['value']}".rstrip())
+                for line in entry.get("lines", []):
+                    L.append("     " + line)
+                for title, name, mark in entry.get("roster", []):
+                    L.append(f"     {_pad(title, 14)}{_pad(name, 16)}{mark}")
+            L.append("")
+        elif kind == "para":
+            L += _wrap(payload) + [""]
+        elif kind == "section":
+            L += [f"[{payload}]", ""]
+        elif kind in ("item_heading", "agenda_heading"):
+            L += _wrap(payload) + [""]
+        elif kind == "indent_para":
+            L += _wrap(payload, indent=body_indent) + [""]
+        elif kind == "resolution":
+            L += _wrap(payload, indent=body_indent) + [""]
+        elif kind in ("kv", "table", "list"):
+            L += _render_blocks([(kind, payload)], s, body_indent)
+        elif kind == "date":
+            L += ["", _center(payload), ""]
+        elif kind == "company":
+            L += [_center(payload), ""]
+        elif kind == "signs":
+            for title, name, seal in payload:
+                L.append(_center(f"{_pad(title, 14)}{_pad(name, 16)}{seal}"))
+            L.append("")
+        elif kind == "attachments":
+            L.append("첨부서류")
+            for i, a in enumerate(payload, start=1):
+                L.append(f"   {i}. {a}")
+            L.append("")
+
+    return "\n".join(L).rstrip() + "\n"
 
 
 # ---------------------------------------------------------------- 정답셋
+
 
 def ground_truth(m: Minutes) -> Dict[str, Any]:
     s = m.style
