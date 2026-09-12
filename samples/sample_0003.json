@@ -1,0 +1,206 @@
+{
+  "company": {
+    "name": "델타F&B 주식회사",
+    "plain_name": "델타F&B",
+    "address": "경기도 평택시 과학로 463, 30층 1588호",
+    "par_value": 500,
+    "shares_issued": 158000,
+    "capital": 79000000,
+    "authorized_shares": 3160000,
+    "business": [
+      "폐기물 재활용업",
+      "반도체 장비 부품 제조업"
+    ]
+  },
+  "meeting": {
+    "title": "이 사 회  의 사 록",
+    "kind": "정기",
+    "date": "2023-12-23",
+    "start_time": "14:00",
+    "end_time": "15:15",
+    "place": "부산광역시 부산진구 강남대로 37, 31층(서울사무소) 회의실",
+    "chair": {
+      "name": "서영아",
+      "title": "대표이사"
+    },
+    "secretary": "양윤열",
+    "total_directors": 4,
+    "present_directors": 4,
+    "total_auditors": 1,
+    "present_auditors": 1,
+    "notice_note": "이사 및 감사 전원의 동의로 상법 제390조 제4항에 따라 소집절차를 생략하였다."
+  },
+  "directors": [
+    {
+      "name": "서영아",
+      "hanja": "徐榮娥",
+      "role": "사내이사",
+      "title": "대표이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    },
+    {
+      "name": "서재환",
+      "hanja": "徐在煥",
+      "role": "기타비상무이사",
+      "title": "이사",
+      "present": true,
+      "mode": "원격",
+      "absence_reason": null
+    },
+    {
+      "name": "안찬영",
+      "hanja": "安燦榮",
+      "role": "사내이사",
+      "title": "이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    },
+    {
+      "name": "남도찬",
+      "hanja": "南道燦",
+      "role": "기타비상무이사",
+      "title": "이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    }
+  ],
+  "auditors": [
+    {
+      "name": "양현정",
+      "role": "감사",
+      "title": "감사",
+      "present": true
+    }
+  ],
+  "reports": [
+    "내부회계관리제도 운영실태 보고",
+    "연구개발 과제 진행현황 보고",
+    "2023년 정보보호 점검 결과 보고"
+  ],
+  "agenda": [
+    {
+      "index": 1,
+      "kind": "borrowing",
+      "title": "대구은행로부터의 자금 차입의 건",
+      "facts": {
+        "lender": "대구은행",
+        "limit": 8300000000,
+        "rate": 4.54,
+        "months": 36,
+        "loan_type": "일반자금대출"
+      },
+      "vote": {
+        "eligible": 4,
+        "present": 4,
+        "favor": 3,
+        "against": 0,
+        "abstain": 1,
+        "result": "원안가결",
+        "unanimous": false,
+        "excluded_director": null
+      }
+    },
+    {
+      "index": 2,
+      "kind": "third_party_issue",
+      "title": "운영자금 조달을 위한 신주발행의 건",
+      "facts": {
+        "new_shares": 1659000,
+        "issue_price": 7500,
+        "total_amount": 12442500000,
+        "share_class": "기명식 보통주식",
+        "payment_date": "2024-01-02",
+        "allottees": [
+          {
+            "name": "북방캐피탈 사모투자합자회사",
+            "shares": 728000,
+            "amount": 5460000000
+          },
+          {
+            "name": "주식회사 알파화학",
+            "shares": 931000,
+            "amount": 6982500000
+          }
+        ]
+      },
+      "vote": {
+        "eligible": 4,
+        "present": 4,
+        "favor": 4,
+        "against": 0,
+        "abstain": 0,
+        "result": "원안가결",
+        "unanimous": true,
+        "excluded_director": null
+      }
+    },
+    {
+      "index": 3,
+      "kind": "financial_statements",
+      "title": "제22기(2022. 1. 1. ~ 2022. 12. 31.) 재무제표 및 영업보고서 승인의 건",
+      "facts": {
+        "term_no": 22,
+        "fiscal_year": 2022,
+        "assets": 280897000000,
+        "liabilities": 175343000000,
+        "equity": 105554000000,
+        "revenue": 75921000000,
+        "operating_income": 1821000000,
+        "net_income": 910000000
+      },
+      "vote": {
+        "eligible": 4,
+        "present": 4,
+        "favor": 4,
+        "against": 0,
+        "abstain": 0,
+        "result": "원안가결",
+        "unanimous": true,
+        "excluded_director": null
+      }
+    }
+  ],
+  "signers": [
+    {
+      "name": "서영아",
+      "title": "대표이사"
+    },
+    {
+      "name": "서재환",
+      "title": "이사"
+    },
+    {
+      "name": "안찬영",
+      "title": "이사"
+    },
+    {
+      "name": "남도찬",
+      "title": "이사"
+    },
+    {
+      "name": "양현정",
+      "title": "감사"
+    }
+  ],
+  "attachments": [
+    "감정평가서 사본 1부"
+  ],
+  "style": {
+    "ending": "yeoss",
+    "date_format": "korean",
+    "money_format": "plain",
+    "agenda_label": "ho",
+    "attendance_layout": "inline",
+    "company_suffix": "주식회사",
+    "seal_mark": "(인)",
+    "use_hanja_names": false,
+    "use_hanja_title": false,
+    "time_format": "colon",
+    "numbering": "arabic"
+  },
+  "seed": 1003
+}

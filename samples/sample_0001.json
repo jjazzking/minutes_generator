@@ -1,0 +1,222 @@
+{
+  "company": {
+    "name": "세진정밀 주식회사",
+    "plain_name": "세진정밀",
+    "address": "경상북도 포항시 남구 봉은사로 586, 30층 2220호",
+    "par_value": 1000,
+    "shares_issued": 6200000,
+    "capital": 6200000000,
+    "authorized_shares": 31000000,
+    "business": [
+      "친환경 포장재 제조업",
+      "데이터베이스 및 온라인정보 제공업",
+      "이차전지 소재 제조 및 판매업"
+    ]
+  },
+  "meeting": {
+    "title": "이사회 회의록",
+    "kind": "임시",
+    "date": "2020-03-04",
+    "start_time": "15:20",
+    "end_time": "16:00",
+    "place": "본점 소재지 본점 회의실",
+    "chair": {
+      "name": "임국준",
+      "title": "대표이사"
+    },
+    "secretary": null,
+    "total_directors": 4,
+    "present_directors": 4,
+    "total_auditors": 1,
+    "present_auditors": 1,
+    "notice_note": "본 이사회의 소집통지는 회의일 7일 전에 각 이사 및 감사에게 서면으로 발송되었다."
+  },
+  "directors": [
+    {
+      "name": "임국준",
+      "hanja": "林國俊",
+      "role": "사내이사",
+      "title": "대표이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    },
+    {
+      "name": "김호영",
+      "hanja": "金浩榮",
+      "role": "사내이사",
+      "title": "이사",
+      "present": true,
+      "mode": "원격",
+      "absence_reason": null
+    },
+    {
+      "name": "차태범",
+      "hanja": "車泰範",
+      "role": "사내이사",
+      "title": "이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    },
+    {
+      "name": "최영석",
+      "hanja": "崔榮錫",
+      "role": "사내이사",
+      "title": "이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    }
+  ],
+  "auditors": [
+    {
+      "name": "신현",
+      "role": "감사",
+      "title": "감사",
+      "present": true
+    }
+  ],
+  "reports": [
+    "2020년 정보보호 점검 결과 보고"
+  ],
+  "agenda": [
+    {
+      "index": 1,
+      "kind": "third_party_issue",
+      "title": "제3자배정 방식에 의한 신주발행의 건",
+      "facts": {
+        "new_shares": 1084000,
+        "issue_price": 8000,
+        "total_amount": 8672000000,
+        "share_class": "기명식 전환우선주식",
+        "payment_date": "2020-03-27",
+        "allottees": [
+          {
+            "name": "대한에너지 주식회사",
+            "shares": 1084000,
+            "amount": 8672000000
+          }
+        ]
+      },
+      "vote": {
+        "eligible": 4,
+        "present": 4,
+        "favor": 4,
+        "against": 0,
+        "abstain": 0,
+        "result": "수정가결",
+        "unanimous": true,
+        "excluded_director": null
+      }
+    },
+    {
+      "index": 2,
+      "kind": "regulation",
+      "title": "인사규정 개정의 건",
+      "facts": {
+        "regulation": "인사규정",
+        "action": "개정",
+        "items": [
+          "겸직 승인 절차 명문화",
+          "내부신고 접수 및 처리 절차 신설"
+        ],
+        "effective_date": "2020-04-06"
+      },
+      "vote": {
+        "eligible": 4,
+        "present": 4,
+        "favor": 3,
+        "against": 0,
+        "abstain": 1,
+        "result": "원안가결",
+        "unanimous": false,
+        "excluded_director": null
+      }
+    },
+    {
+      "index": 3,
+      "kind": "borrowing",
+      "title": "주식회사 신한은행로부터의 자금 차입의 건",
+      "facts": {
+        "lender": "주식회사 신한은행",
+        "limit": 39600000000,
+        "rate": 4.42,
+        "months": 12,
+        "loan_type": "운전자금대출"
+      },
+      "vote": {
+        "eligible": 4,
+        "present": 4,
+        "favor": 3,
+        "against": 1,
+        "abstain": 0,
+        "result": "원안가결",
+        "unanimous": false,
+        "excluded_director": null
+      }
+    },
+    {
+      "index": 4,
+      "kind": "guarantee",
+      "title": "계열회사(주식회사 미래스마트중공업)에 대한 지급보증의 건",
+      "facts": {
+        "guarantee_for": "주식회사 미래스마트중공업",
+        "creditor": "한국수출입은행",
+        "amount": 10500000000,
+        "months": 12
+      },
+      "vote": {
+        "eligible": 4,
+        "present": 4,
+        "favor": 4,
+        "against": 0,
+        "abstain": 0,
+        "result": "원안가결",
+        "unanimous": true,
+        "excluded_director": null
+      }
+    }
+  ],
+  "signers": [
+    {
+      "name": "임국준",
+      "title": "대표이사"
+    },
+    {
+      "name": "김호영",
+      "title": "이사"
+    },
+    {
+      "name": "차태범",
+      "title": "이사"
+    },
+    {
+      "name": "최영석",
+      "title": "이사"
+    },
+    {
+      "name": "신현",
+      "title": "감사"
+    }
+  ],
+  "attachments": [
+    "여신거래약정서(안) 1부",
+    "재무제표 및 영업보고서 1부",
+    "감정평가서 사본 1부"
+  ],
+  "style": {
+    "ending": "yeoss",
+    "date_format": "korean",
+    "money_format": "plain",
+    "agenda_label": "num",
+    "attendance_layout": "both",
+    "company_suffix": "주식회사",
+    "seal_mark": "(인)",
+    "use_hanja_names": false,
+    "use_hanja_title": false,
+    "time_format": "korean",
+    "numbering": "hangul"
+  },
+  "seed": 1001
+}
