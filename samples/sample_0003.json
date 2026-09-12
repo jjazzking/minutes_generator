@@ -137,21 +137,47 @@
   "signers": [
     {
       "name": "장명태",
-      "title": "대표이사"
+      "title": "대표이사",
+      "seal": {
+        "text": "장명태印",
+        "shape": "circle",
+        "kind": "성명인"
+      }
     },
     {
       "name": "손병정",
-      "title": "이사"
+      "title": "이사",
+      "seal": {
+        "text": "손병정印",
+        "shape": "circle",
+        "kind": "성명인"
+      }
     },
     {
       "name": "송준미",
-      "title": "이사"
+      "title": "이사",
+      "seal": {
+        "text": "송준미印",
+        "shape": "circle",
+        "kind": "성명인"
+      }
     },
     {
       "name": "홍윤웅",
-      "title": "상근감사"
+      "title": "상근감사",
+      "seal": {
+        "text": "홍윤웅",
+        "shape": "circle",
+        "kind": "성명인"
+      }
     }
   ],
+  "seals": {
+    "enabled": true,
+    "mark": "(인)",
+    "paging_seal": "代表理事之印",
+    "corner_stamp": "대 조 필"
+  },
   "attachments": [],
   "style": {
     "ending": "yeoss",
@@ -164,7 +190,27 @@
     "use_hanja_names": false,
     "use_hanja_title": false,
     "time_format": "colon",
-    "numbering": "arabic"
+    "numbering": "arabic",
+    "font_family": "gothic",
+    "font_size": 10.5,
+    "leading_ratio": 1.55,
+    "text_align": "left",
+    "page_border": false,
+    "title_underline": false
   },
-  "seed": 1003
+  "seed": 1003,
+  "scan": {
+    "dpi": 150,
+    "rotate": 1.6338147200214304,
+    "blotches": 3,
+    "fold": 0,
+    "blur": 0.7938644864032067,
+    "contrast": 1.1994548503833162,
+    "brightness": 0.9278452571609951,
+    "noise": 8.714113735222654,
+    "speckle": 195,
+    "border": 0,
+    "profile": "photocopy",
+    "pages": 2
+  }
 }

@@ -141,25 +141,56 @@
   "signers": [
     {
       "name": "서재람",
-      "title": "대표이사"
+      "title": "대표이사",
+      "seal": {
+        "text": "代表理事之印",
+        "shape": "circle",
+        "kind": "직인"
+      }
     },
     {
       "name": "남태범",
-      "title": "각자대표이사"
+      "title": "각자대표이사",
+      "seal": {
+        "text": "남태범之印",
+        "shape": "rounded",
+        "kind": "성명인"
+      }
     },
     {
       "name": "손은숙",
-      "title": "이사"
+      "title": "이사",
+      "seal": {
+        "text": "손은숙印",
+        "shape": "square",
+        "kind": "성명인"
+      }
     },
     {
       "name": "신현",
-      "title": "이사"
+      "title": "이사",
+      "seal": {
+        "text": "신현",
+        "shape": "rounded",
+        "kind": "성명인"
+      }
     },
     {
       "name": "성선호",
-      "title": "이사"
+      "title": "이사",
+      "seal": {
+        "text": "理事之印",
+        "shape": "circle",
+        "kind": "직인"
+      }
     }
   ],
+  "seals": {
+    "enabled": true,
+    "mark": "(인)",
+    "paging_seal": null,
+    "corner_stamp": "대 조 필"
+  },
   "attachments": [
     "감정평가서 사본 1부",
     "여신거래약정서(안) 1부"
@@ -175,7 +206,27 @@
     "use_hanja_names": false,
     "use_hanja_title": false,
     "time_format": "korean",
-    "numbering": "hangul"
+    "numbering": "hangul",
+    "font_family": "gothic",
+    "font_size": 10.5,
+    "leading_ratio": 1.45,
+    "text_align": "justify",
+    "page_border": false,
+    "title_underline": true
   },
-  "seed": 1001
+  "seed": 1001,
+  "scan": {
+    "dpi": 150,
+    "rotate": -1.4288771737582022,
+    "blotches": 2,
+    "fold": 2,
+    "blur": 0.4424076834853528,
+    "contrast": 1.2879654665694829,
+    "brightness": 0.866133866639654,
+    "noise": 8.075721322017154,
+    "speckle": 154,
+    "border": 0,
+    "profile": "photocopy",
+    "pages": 2
+  }
 }

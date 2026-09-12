@@ -13,14 +13,15 @@ import urllib.parse
 import webbrowser
 import zipfile
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from .agenda import GENERATORS, KIND_LABELS
-from .generator import build_minutes
+from .generator import build_minutes, force_seals
 from .html_render import render_html
 from .render import ground_truth, render_text
 
 MAX_BATCH = 500
+PREVIEW_DPI_CAP = 140          # 미리보기는 응답 속도를 위해 해상도를 낮춘다
 
 
 # ---------------------------------------------------------------- 요청 처리
@@ -52,9 +53,36 @@ def _kinds(params) -> Optional[List[str]]:
 
 def _make(params):
     seed = _int(params, "seed", random.randrange(1 << 30))
-    return seed, build_minutes(seed=seed,
-                               agenda_kinds=_kinds(params),
-                               n_agenda=_int(params, "n_agenda"))
+    minutes = build_minutes(seed=seed, agenda_kinds=_kinds(params),
+                            n_agenda=_int(params, "n_agenda"))
+    seals = _one(params, "seals", "auto")
+    if seals in ("on", "off"):
+        force_seals(minutes, seals == "on", seed)
+    return seed, minutes
+
+
+def _scan_pages(minutes, seed: int, profile: str, dpi=None):
+    """(페이지 이미지, 적용값)을 돌려준다."""
+    from .pdf import pdf_bytes
+    from .scan import scan
+
+    return scan(pdf_bytes(minutes, seed), profile,
+                random.Random(seed ^ 0x5CA4), dpi)
+
+
+def scan_status() -> Dict[str, object]:
+    base = pdf_status()
+    if not base.get("ok"):
+        return {"ok": False, "reason": base["reason"], "fix": base["fix"]}
+    try:
+        import pypdfium2  # noqa: F401
+    except ImportError:
+        try:
+            import fitz  # noqa: F401
+        except ImportError:
+            return {"ok": False, "reason": "PDF 래스터라이저가 없습니다.",
+                    "fix": "pip install pypdfium2"}
+    return {"ok": True}
 
 
 def pdf_status() -> Dict[str, object]:
@@ -108,16 +136,26 @@ class Handler(BaseHTTPRequestHandler):
             if route == "/":
                 self._send(PAGE.encode("utf-8"), "text/html; charset=utf-8")
             elif route == "/api/status":
+                from .scan import PROFILE_LABELS, PROFILES
                 self._json({
                     "pdf": pdf_status(),
+                    "scan": scan_status(),
                     "kinds": [{"key": k, "label": KIND_LABELS[k]}
                               for k in sorted(GENERATORS, key=lambda x: KIND_LABELS[x])],
+                    "profiles": [{"key": k, "label": PROFILE_LABELS.get(k, k)}
+                                 for k in list(PROFILES) + ["random"]],
                     "max_batch": MAX_BATCH,
                 })
             elif route == "/preview":
                 seed, minutes = _make(params)
-                html = render_html(minutes, seed)
-                self._send(html.encode("utf-8"), "text/html; charset=utf-8")
+                profile = _one(params, "scan", "clean")
+                if profile and profile != "clean":
+                    dpi = min(_int(params, "dpi", PREVIEW_DPI_CAP), PREVIEW_DPI_CAP)
+                    pages, applied = _scan_pages(minutes, seed, profile, dpi)
+                    body = _scan_page_html(pages, applied)
+                else:
+                    body = render_html(minutes, seed)
+                self._send(body.encode("utf-8"), "text/html; charset=utf-8")
             elif route == "/download":
                 self._download(params)
             elif route == "/batch":
@@ -149,6 +187,20 @@ class Handler(BaseHTTPRequestHandler):
         elif fmt == "pdf":
             from .pdf import pdf_bytes
             self._send(pdf_bytes(minutes, seed), "application/pdf", stem + ".pdf")
+        elif fmt in ("scan_pdf", "scan_png"):
+            profile = _one(params, "scan", "office_scan")
+            if profile == "clean":
+                profile = "office_scan"
+            pages, _applied = _scan_pages(minutes, seed, profile, _int(params, "dpi"))
+            if fmt == "scan_pdf":
+                from .scan import images_to_pdf
+                buf = io.BytesIO()
+                images_to_pdf(pages, buf)
+                self._send(buf.getvalue(), "application/pdf", f"{stem}_scan.pdf")
+            else:
+                buf = io.BytesIO()
+                pages[0].save(buf, format="PNG")
+                self._send(buf.getvalue(), "image/png", f"{stem}_scan_p1.png")
         else:
             self._error("알 수 없는 형식입니다.")
 
@@ -156,11 +208,15 @@ class Handler(BaseHTTPRequestHandler):
         count = max(1, min(MAX_BATCH, _int(params, "count", 10)))
         base = _int(params, "seed", random.randrange(1 << 30))
         formats = [f for f in (_one(params, "formats", "pdf,json") or "").split(",")
-                   if f in ("pdf", "txt", "json", "html")]
+                   if f in ("pdf", "txt", "json", "html", "scan")]
         if not formats:
             return self._error("형식을 하나 이상 고르세요.")
         kinds = _kinds(params)
         n_agenda = _int(params, "n_agenda")
+        seals = _one(params, "seals", "auto")
+        profile = _one(params, "scan", "office_scan")
+        if profile == "clean":
+            profile = "office_scan"
 
         buf = io.BytesIO()
         width = max(4, len(str(count)))
@@ -168,12 +224,24 @@ class Handler(BaseHTTPRequestHandler):
             for i in range(count):
                 seed = base + i
                 minutes = build_minutes(seed=seed, agenda_kinds=kinds, n_agenda=n_agenda)
+                if seals in ("on", "off"):
+                    force_seals(minutes, seals == "on", seed)
                 stem = f"minutes_{i + 1:0{width}d}"
+                applied = None
+                if "scan" in formats:
+                    from .scan import images_to_pdf
+                    pages, applied = _scan_pages(minutes, seed, profile, _int(params, "dpi"))
+                    page_buf = io.BytesIO()
+                    images_to_pdf(pages, page_buf)
+                    zf.writestr(stem + "_scan.pdf", page_buf.getvalue())
+                    applied["pages"] = len(pages)
                 if "txt" in formats:
                     zf.writestr(stem + ".txt", render_text(minutes, seed))
                 if "json" in formats:
                     payload = ground_truth(minutes)
                     payload["seed"] = seed
+                    if applied:
+                        payload["scan"] = applied
                     zf.writestr(stem + ".json",
                                 json.dumps(payload, ensure_ascii=False, indent=2))
                 if "html" in formats:
@@ -182,6 +250,32 @@ class Handler(BaseHTTPRequestHandler):
                     from .pdf import pdf_bytes
                     zf.writestr(stem + ".pdf", pdf_bytes(minutes, seed))
         self._send(buf.getvalue(), "application/zip", f"minutes_{base}_{count}건.zip")
+
+
+def _scan_page_html(pages, applied: Dict[str, Any]) -> str:
+    """열화된 페이지 이미지를 한 장씩 보여 주는 미리보기 문서."""
+    import base64
+
+    shots = []
+    for page in pages:
+        buf = io.BytesIO()
+        page.save(buf, format="JPEG", quality=82)
+        uri = base64.b64encode(buf.getvalue()).decode("ascii")
+        shots.append(f'<img src="data:image/jpeg;base64,{uri}" alt="스캔본">')
+    rows = "".join(
+        f"<dt>{k}</dt><dd>{v if not isinstance(v, float) else round(v, 3)}</dd>"
+        for k, v in sorted(applied.items()))
+    return (
+        "<!doctype html><html lang=\"ko\"><head><meta charset=\"utf-8\">"
+        "<style>body{margin:0;background:#5b5f66;padding:14px;"
+        "font-family:system-ui,'Malgun Gothic',sans-serif}"
+        "img{display:block;width:min(100%,900px);margin:0 auto 14px;"
+        "box-shadow:0 4px 18px rgba(0,0,0,.45)}"
+        "dl{max-width:900px;margin:0 auto;color:#e8eaed;font-size:12px;"
+        "display:grid;grid-template-columns:max-content 1fr;gap:2px 12px;"
+        "background:#3c4046;padding:12px 16px;border-radius:8px}"
+        "dt{color:#a8b0bb}dd{margin:0}</style></head><body>"
+        f"{''.join(shots)}<dl>{rows}</dl></body></html>")
 
 
 # ---------------------------------------------------------------- 화면
@@ -279,6 +373,7 @@ PAGE = r"""<!doctype html>
 <header>
   <h1>이사회 의사록 생성기</h1>
   <span class="chip" id="pdfchip">확인 중…</span>
+  <span class="chip" id="scanchip">확인 중…</span>
 </header>
 
 <div class="layout">
@@ -305,6 +400,19 @@ PAGE = r"""<!doctype html>
       <button id="clearkinds">전체 해제</button>
     </div>
 
+    <h2>겉모습</h2>
+    <label for="seals">인영(도장)</label>
+    <select id="seals">
+      <option value="auto">자동 (문서마다 다르게)</option>
+      <option value="on">항상 찍기</option>
+      <option value="off">찍지 않기</option>
+    </select>
+
+    <label for="scanprofile" style="margin-top:12px">스캔 노이즈</label>
+    <select id="scanprofile"></select>
+    <p class="hint">노이즈를 고르면 미리보기가 열화된 이미지로 바뀐다.
+      만드는 데 몇 초 걸린다.</p>
+
     <div style="margin-top:16px">
       <button class="primary" id="make">새 문서 만들기</button>
     </div>
@@ -315,7 +423,11 @@ PAGE = r"""<!doctype html>
       <button class="wide" data-dl="txt">텍스트 (.txt)</button>
       <button class="wide" data-dl="json">정답셋 (.json)</button>
       <button class="wide" data-dl="html">HTML</button>
+      <button class="wide" data-dl="scan_pdf" id="dlscanpdf">스캔본 (PDF)</button>
+      <button class="wide" data-dl="scan_png" id="dlscanpng">스캔본 1쪽 (PNG)</button>
     </div>
+    <p class="hint">스캔본은 위에서 고른 노이즈를 쓴다.
+      노이즈가 "깨끗한 원본" 이면 사무실 스캔으로 만든다.</p>
 
     <h2>여러 건 한꺼번에</h2>
     <label for="count">개수</label>
@@ -325,6 +437,7 @@ PAGE = r"""<!doctype html>
       <label><input type="checkbox" class="bf" value="json" checked>JSON</label>
       <label><input type="checkbox" class="bf" value="txt">TXT</label>
       <label><input type="checkbox" class="bf" value="html">HTML</label>
+      <label><input type="checkbox" class="bf" value="scan">스캔본</label>
     </div>
     <button class="wide" id="zip">ZIP 으로 내려받기</button>
     <p class="hint">시드 값부터 1씩 올려가며 만든다. 500건까지.
@@ -358,15 +471,24 @@ function query(extra) {
   if (n) p.set('n_agenda', n);
   const k = selectedKinds();
   if (k.length) p.set('agenda', k.join(','));
+  p.set('seals', $('seals').value);
+  p.set('scan', $('scanprofile').value || 'clean');
   for (const [key, val] of Object.entries(extra || {})) p.set(key, val);
   return p.toString();
 }
 
 function refresh() {
-  const q = query();
-  $('frame').src = '/preview?' + q;
-  $('seedlabel').textContent = '시드 ' + ($('seed').value || '0');
+  const profile = $('scanprofile').value || 'clean';
+  const busy = profile !== 'clean';
+  $('seedlabel').textContent = busy
+    ? '시드 ' + ($('seed').value || '0') + ' · 스캔본 만드는 중…'
+    : '시드 ' + ($('seed').value || '0');
+  $('frame').src = '/preview?' + query();
 }
+
+$('frame') && ($('frame').onload = () => {
+  $('seedlabel').textContent = '시드 ' + ($('seed').value || '0');
+});
 
 async function boot() {
   status = await (await fetch('/api/status')).json();
@@ -379,6 +501,21 @@ async function boot() {
     $('dlpdf').disabled = true;
     document.querySelector('.bf[value=pdf]').checked = false;
     document.querySelector('.bf[value=pdf]').disabled = true;
+  }
+
+  const sc = $('scanchip');
+  $('scanprofile').innerHTML = status.profiles.map(
+    p => `<option value="${p.key}">${p.label}</option>`).join('');
+  if (status.scan.ok) {
+    sc.textContent = '스캔 노이즈 사용 가능';
+  } else {
+    sc.className = 'chip bad';
+    sc.textContent = '스캔 불가 · ' + status.scan.reason + ' → ' + status.scan.fix;
+    $('scanprofile').disabled = true;
+    $('dlscanpdf').disabled = true;
+    $('dlscanpng').disabled = true;
+    const sb = document.querySelector('.bf[value=scan]');
+    sb.checked = false; sb.disabled = true;
   }
   const box = $('kinds');
   box.innerHTML = status.kinds.map(k =>
@@ -394,6 +531,8 @@ $('make').onclick = () => { $('seed').value = randomSeed(); refresh(); };
 $('seed').onchange = refresh;
 $('nagenda').onchange = refresh;
 $('kinds').onchange = refresh;
+$('seals').onchange = refresh;
+$('scanprofile').onchange = refresh;
 $('clearkinds').onclick = () => {
   document.querySelectorAll('#kinds input').forEach(i => i.checked = false);
   refresh();

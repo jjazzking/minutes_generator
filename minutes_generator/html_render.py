@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """의사록을 HTML로 출력한다. 화면 미리보기와 브라우저 인쇄(PDF)에 쓴다."""
 
+import base64
+import random
 from html import escape
-from typing import List
+from typing import List, Optional
 
-from .model import Minutes
+from .model import Minutes, Seal
 from .render import _label, _marker, build_flow
 
 FONT_STACKS = {
@@ -70,8 +72,19 @@ PAGE_CSS = """
 .doc .closing { margin-top: 8mm; }
 .doc .datestamp { text-align: center; margin: 12mm 0 6mm 0; }
 .doc .corp { text-align: center; font-weight: 700; margin-bottom: 8mm; }
+.doc .inner { position: relative; }
 .doc .signs { width: auto; margin: 0 auto; border: none; }
 .doc .signs td { border: none; padding: 2mm 3mm; white-space: nowrap; }
+.doc .signs td.mark { position: relative; }
+.doc .signs.sealed td { padding: 5.5mm 3mm; }
+.doc .signs img.seal {
+  position: absolute; top: 50%; width: 13mm; height: auto;
+  opacity: .93; pointer-events: none;
+}
+.doc img.stamp {
+  position: absolute; top: 4mm; right: 2mm; width: 40mm; opacity: .88;
+  pointer-events: none;
+}
 .doc .attach { margin-top: 10mm; }
 .doc .attach ol { margin: 2mm 0 0 6mm; padding: 0; }
 @media print {
@@ -81,6 +94,48 @@ PAGE_CSS = """
   .doc table, .doc dl.kv { break-inside: avoid; }
 }
 """
+
+
+def _data_uri(png: bytes) -> str:
+    return "data:image/png;base64," + base64.b64encode(png).decode("ascii")
+
+
+def _seal_img(seal: Optional[Seal], seed: int, index: int) -> str:
+    """인영 PNG 를 data URI 로 심는다. Pillow 나 글꼴이 없으면 빈 문자열."""
+    if seal is None:
+        return ""
+    try:
+        from .seal import make_seal
+    except ImportError:
+        return ""
+    try:
+        import io as _io
+        rng = random.Random(seed * 977 + index)
+        buf = _io.BytesIO()
+        make_seal(seal.text, rng, size=240, shape=seal.shape).save(buf, format="PNG")
+        # 손으로 찍은 것처럼 위치를 조금씩 흔든다.
+        left = rng.uniform(-11.5, -5.5)
+        shift = rng.uniform(-1.6, 1.6)
+    except Exception:                      # noqa: BLE001  글꼴이 없으면 조용히 생략
+        return ""
+    return (f'<img class="seal" alt="인영" style="left:{left:.1f}mm;'
+            f'transform:translateY(calc(-50% + {shift:.1f}mm))" '
+            f'src="{_data_uri(buf.getvalue())}">')
+
+
+def _stamp_img(text: Optional[str], seed: int) -> str:
+    if not text:
+        return ""
+    try:
+        import io as _io
+
+        from .seal import make_stamp
+        rng = random.Random(seed * 31 + 7)
+        buf = _io.BytesIO()
+        make_stamp(text, rng).save(buf, format="PNG")
+    except Exception:                      # noqa: BLE001
+        return ""
+    return f'<img class="stamp" alt="스탬프" src="{_data_uri(buf.getvalue())}">'
 
 
 def render_html(m: Minutes, seed: int = 0, full_page: bool = True) -> str:
@@ -93,6 +148,7 @@ def render_html(m: Minutes, seed: int = 0, full_page: bool = True) -> str:
                   f" --ta: {s.text_align};")
     parts.append(f'<article class="{cls}" style="{escape(style_attr, quote=True)}">')
     parts.append('<div class="inner">')
+    parts.append(_stamp_img(m.corner_stamp, seed))
 
     for kind, payload in build_flow(m, seed):
         if kind == "title":
@@ -148,10 +204,13 @@ def render_html(m: Minutes, seed: int = 0, full_page: bool = True) -> str:
         elif kind == "company":
             parts.append(f'<div class="corp">{escape(payload)}</div>')
         elif kind == "signs":
-            parts.append('<table class="signs"><tbody>')
-            for title, name, seal in payload:
-                parts.append(f"<tr><td>{escape(title)}</td><td>{escape(name)}</td>"
-                             f"<td>{escape(seal)}</td></tr>")
+            sealed = " sealed" if any(r.get("seal") for r in payload) else ""
+            parts.append(f'<table class="signs{sealed}"><tbody>')
+            for i, row in enumerate(payload):
+                img = _seal_img(row.get("seal"), seed, i)
+                parts.append(f"<tr><td>{escape(row['title'])}</td>"
+                             f"<td>{escape(row['name'])}</td>"
+                             f'<td class="mark">{escape(row["mark"])}{img}</td></tr>')
             parts.append("</tbody></table>")
         elif kind == "attachments":
             parts.append('<div class="attach">첨부서류<ol>')

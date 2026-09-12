@@ -10,7 +10,7 @@ from . import lexicon as lx
 from . import names as nm
 from .agenda import GENERATORS, WEIGHTS, Ctx, LST, P
 from .model import (
-    AgendaItem, Company, Minutes, Officer, ReportItem, Style, Vote, comma,
+    AgendaItem, Company, Minutes, Officer, ReportItem, Seal, Style, Vote, comma,
 )
 
 # ---------------------------------------------------------------- 회사
@@ -132,6 +132,56 @@ def make_style(rng: random.Random) -> Style:
         title_underline=rng.random() < 0.3,
         text_align=rng.choices(["justify", "left"], weights=[62, 38])[0],
     )
+
+
+STAMP_TEXTS = ["사     본", "원본대조필", "접     수", "확     인", "대 조 필"]
+
+
+def assign_seals(rng: random.Random, minutes: Minutes) -> None:
+    """서명란 인영, 간인, 스탬프를 정한다. 정답셋에도 그대로 실린다."""
+    from .seal import hanja_available, seal_text
+
+    style = minutes.style
+    style.seal_images = style.seal_mark != "(서명)" and rng.random() < 0.82
+    if not style.seal_images:
+        return
+
+    hanja = hanja_available()
+    shapes = ["circle", "circle", "square", "rounded"]
+    for officer in minutes.signers:
+        text, kind = seal_text(officer.name, officer.title, rng, hanja)
+        officer.seal = Seal(text=text, shape=rng.choice(shapes), kind=kind)
+
+    if rng.random() < 0.35:
+        chair = minutes.chair
+        text, kind = seal_text(chair.name, chair.title, rng, hanja)
+        minutes.paging_seal = Seal(text=text, shape="circle", kind=kind)
+    if rng.random() < 0.22:
+        minutes.corner_stamp = rng.choice(STAMP_TEXTS)
+
+
+def force_seals(minutes: Minutes, on: bool, seed: int = 0) -> None:
+    """인영을 강제로 켜거나 끈다. UI 에서 눈으로 비교할 때 쓴다."""
+    if not on:
+        minutes.style.seal_images = False
+        minutes.paging_seal = None
+        minutes.corner_stamp = None
+        for officer in minutes.signers:
+            officer.seal = None
+        return
+    if minutes.style.seal_images:
+        return
+    if minutes.style.seal_mark == "(서명)":
+        minutes.style.seal_mark = "(인)"
+    rng = random.Random(seed ^ 0x5EA1)
+    from .seal import hanja_available, seal_text
+
+    hanja = hanja_available()
+    minutes.style.seal_images = True
+    for officer in minutes.signers:
+        text, kind = seal_text(officer.name, officer.title, rng, hanja)
+        officer.seal = Seal(text=text, shape=rng.choice(["circle", "circle", "square", "rounded"]),
+                            kind=kind)
 
 
 # ---------------------------------------------------------------- 표결
@@ -299,7 +349,7 @@ def build_minutes(seed: Optional[int] = None,
     # 상법 제391조의3에 따라 출석한 이사와 감사는 모두 기명날인한다.
     signers = [d for d in directors if d.present] + [a for a in auditors if a.present]
 
-    return Minutes(
+    minutes = Minutes(
         company=company, style=style,
         meeting_no=rng.randint(1, 14),
         meeting_kind=rng.choices(["임시", "정기"], weights=[62, 38])[0],
@@ -315,3 +365,5 @@ def build_minutes(seed: Optional[int] = None,
         discussion=discussion, signers=signers,
         notice_note=notice_note, attachments=attachments,
     )
+    assign_seals(rng, minutes)
+    return minutes

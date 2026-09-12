@@ -325,7 +325,9 @@ def build_flow(m: Minutes, seed: int = 0) -> List[Block]:
     F.append(("para", fix_josa(_certification(m, rng))))
     F.append(("date", s.fmt_date(m.meeting_date)))
     F.append(("company", m.company.full_name(s)))
-    F.append(("signs", [(o.title, o.display(s), s.seal_mark) for o in m.signers]))
+    F.append(("signs", [{"title": o.title, "name": o.display(s),
+                         "mark": s.seal_mark, "seal": o.seal}
+                        for o in m.signers]))
     if m.attachments:
         F.append(("attachments", list(m.attachments)))
     return F
@@ -381,8 +383,9 @@ def render_text(m: Minutes, seed: int = 0) -> str:
         elif kind == "company":
             L += [_center(payload), ""]
         elif kind == "signs":
-            for title, name, seal in payload:
-                L.append(_center(f"{_pad(title, 14)}{_pad(name, 16)}{seal}"))
+            for row in payload:
+                L.append(_center(f"{_pad(row['title'], 14)}"
+                                 f"{_pad(row['name'], 16)}{row['mark']}"))
             L.append("")
         elif kind == "attachments":
             L.append("첨부서류")
@@ -448,7 +451,18 @@ def ground_truth(m: Minutes) -> Dict[str, Any]:
             }
             for i, (item, v) in enumerate(m.agenda, start=1)
         ],
-        "signers": [{"name": o.name, "title": o.title} for o in m.signers],
+        "signers": [
+            {"name": o.name, "title": o.title,
+             "seal": ({"text": o.seal.text, "shape": o.seal.shape, "kind": o.seal.kind}
+                      if o.seal else None)}
+            for o in m.signers
+        ],
+        "seals": {
+            "enabled": s.seal_images,
+            "mark": s.seal_mark,
+            "paging_seal": (m.paging_seal.text if m.paging_seal else None),
+            "corner_stamp": m.corner_stamp,
+        },
         "attachments": m.attachments,
         "style": {
             "ending": s.ending, "date_format": s.date_format, "money_format": s.money_format,
@@ -456,5 +470,8 @@ def ground_truth(m: Minutes) -> Dict[str, Any]:
             "company_suffix": s.company_suffix, "seal_mark": s.seal_mark,
             "use_hanja_names": s.use_hanja_names, "use_hanja_title": s.use_hanja_title,
             "time_format": s.time_format, "numbering": s.numbering,
+            "font_family": s.font_family, "font_size": s.font_size,
+            "leading_ratio": s.leading_ratio, "text_align": s.text_align,
+            "page_border": s.page_border, "title_underline": s.title_underline,
         },
     }

@@ -75,6 +75,7 @@ class Style:
     page_border: bool = False           # 본문 외곽 테두리
     title_underline: bool = False       # 제목 밑줄
     text_align: str = "justify"         # justify: 양쪽 정렬 / left: 왼쪽 정렬
+    seal_images: bool = False           # 서명란에 실제 인영 이미지를 찍는지
 
     # ----- 포맷터 -----
 
@@ -136,6 +137,15 @@ class Style:
 # ---------------------------------------------------------------- 구성원
 
 @dataclass
+class Seal:
+    """서명란에 찍히는 인영 한 개."""
+
+    text: str                 # 도장에 새겨진 글자
+    shape: str                # circle / square / rounded
+    kind: str                 # 직인 / 성명인
+
+
+@dataclass
 class Officer:
     name: str
     hanja: str
@@ -144,6 +154,7 @@ class Officer:
     present: bool = True
     attend_mode: str = "출석"  # 출석 / 원격 / 불참
     absence_reason: Optional[str] = None
+    seal: Optional["Seal"] = None
 
     def display(self, style: Style) -> str:
         if style.use_hanja_names and self.hanja:
@@ -226,6 +237,8 @@ class Minutes:
     signers: List[Officer]
     notice_note: Optional[str]
     attachments: List[str]
+    paging_seal: Optional[Seal] = None    # 간인(페이지에 걸쳐 찍는 도장)
+    corner_stamp: Optional[str] = None    # 사본, 원본대조필 등 스탬프
 
     @property
     def total_directors(self) -> int:

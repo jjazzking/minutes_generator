@@ -55,8 +55,19 @@
 .doc .closing { margin-top: 8mm; }
 .doc .datestamp { text-align: center; margin: 12mm 0 6mm 0; }
 .doc .corp { text-align: center; font-weight: 700; margin-bottom: 8mm; }
+.doc .inner { position: relative; }
 .doc .signs { width: auto; margin: 0 auto; border: none; }
 .doc .signs td { border: none; padding: 2mm 3mm; white-space: nowrap; }
+.doc .signs td.mark { position: relative; }
+.doc .signs.sealed td { padding: 5.5mm 3mm; }
+.doc .signs img.seal {
+  position: absolute; top: 50%; width: 13mm; height: auto;
+  opacity: .93; pointer-events: none;
+}
+.doc img.stamp {
+  position: absolute; top: 4mm; right: 2mm; width: 40mm; opacity: .88;
+  pointer-events: none;
+}
 .doc .attach { margin-top: 10mm; }
 .doc .attach ol { margin: 2mm 0 0 6mm; padding: 0; }
 @media print {
@@ -67,6 +78,7 @@
 }
 </style></head><body><article class="doc" style="--ff: &#x27;바탕&#x27;, Batang, &#x27;AppleMyungjo&#x27;, &#x27;NanumMyeongjo&#x27;, &#x27;Noto Serif KR&#x27;, serif; --fs: 10.5pt; --lh: 1.8; --ta: justify;">
 <div class="inner">
+
 <h1 class="">이 사 회 의 사 록</h1>
 <div class="meta">
 <div class="row"><span class="lbl">1. 상    호:</span><span class="val">그린엔지니어링 주식회사</span></div>
@@ -106,11 +118,11 @@
 <div class="datestamp">2024. 03. 20.</div>
 <div class="corp">그린엔지니어링 주식회사</div>
 <table class="signs"><tbody>
-<tr><td>대표이사</td><td>주서현</td><td>(印)</td></tr>
-<tr><td>각자대표이사</td><td>강준빈</td><td>(印)</td></tr>
-<tr><td>이사</td><td>송현준</td><td>(印)</td></tr>
-<tr><td>이사</td><td>홍선철</td><td>(印)</td></tr>
-<tr><td>감사</td><td>배민웅</td><td>(印)</td></tr>
-<tr><td>상근감사</td><td>임빈</td><td>(印)</td></tr>
+<tr><td>대표이사</td><td>주서현</td><td class="mark">(印)</td></tr>
+<tr><td>각자대표이사</td><td>강준빈</td><td class="mark">(印)</td></tr>
+<tr><td>이사</td><td>송현준</td><td class="mark">(印)</td></tr>
+<tr><td>이사</td><td>홍선철</td><td class="mark">(印)</td></tr>
+<tr><td>감사</td><td>배민웅</td><td class="mark">(印)</td></tr>
+<tr><td>상근감사</td><td>임빈</td><td class="mark">(印)</td></tr>
 </tbody></table>
 </div></article></body></html>

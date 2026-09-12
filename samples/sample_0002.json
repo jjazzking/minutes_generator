@@ -130,29 +130,41 @@
   "signers": [
     {
       "name": "주서현",
-      "title": "대표이사"
+      "title": "대표이사",
+      "seal": null
     },
     {
       "name": "강준빈",
-      "title": "각자대표이사"
+      "title": "각자대표이사",
+      "seal": null
     },
     {
       "name": "송현준",
-      "title": "이사"
+      "title": "이사",
+      "seal": null
     },
     {
       "name": "홍선철",
-      "title": "이사"
+      "title": "이사",
+      "seal": null
     },
     {
       "name": "배민웅",
-      "title": "감사"
+      "title": "감사",
+      "seal": null
     },
     {
       "name": "임빈",
-      "title": "상근감사"
+      "title": "상근감사",
+      "seal": null
     }
   ],
+  "seals": {
+    "enabled": false,
+    "mark": "(印)",
+    "paging_seal": null,
+    "corner_stamp": null
+  },
   "attachments": [],
   "style": {
     "ending": "yeoss",
@@ -165,7 +177,25 @@
     "use_hanja_names": false,
     "use_hanja_title": false,
     "time_format": "korean",
-    "numbering": "arabic"
+    "numbering": "arabic",
+    "font_family": "myeongjo",
+    "font_size": 10.5,
+    "leading_ratio": 1.8,
+    "text_align": "justify",
+    "page_border": false,
+    "title_underline": false
   },
-  "seed": 1002
+  "seed": 1002,
+  "scan": {
+    "dpi": 150,
+    "rotate": 0.7545484888908924,
+    "resample": 0.6044418140846083,
+    "blur": 0.6067375086436662,
+    "contrast": 1.4311484413096205,
+    "bitonal": 155,
+    "speckle": 273,
+    "streaks": 2,
+    "profile": "fax",
+    "pages": 2
+  }
 }
