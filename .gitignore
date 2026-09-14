@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+
+# 동봉 폰트는 커밋하되, 실수로 들어온 CFF 폰트는 막는다
+fonts/*.otf
+fonts/*.ttc
