@@ -1,0 +1,232 @@
+{
+  "company": {
+    "name": "세진정밀 주식회사",
+    "plain_name": "세진정밀",
+    "address": "경상북도 포항시 남구 봉은사로 586, 30층 2220호",
+    "par_value": 1000,
+    "shares_issued": 6200000,
+    "capital": 6200000000,
+    "authorized_shares": 31000000,
+    "business": [
+      "친환경 포장재 제조업",
+      "데이터베이스 및 온라인정보 제공업",
+      "이차전지 소재 제조 및 판매업"
+    ]
+  },
+  "meeting": {
+    "title": "이사회 회의록",
+    "kind": "정기",
+    "date": "2019-01-08",
+    "start_time": "10:40",
+    "end_time": "11:15",
+    "place": "경상북도 포항시 남구 봉은사로 586, 30층 2220호 공장 관리동 회의실",
+    "chair": {
+      "name": "서재람",
+      "title": "대표이사"
+    },
+    "secretary": null,
+    "total_directors": 5,
+    "present_directors": 5,
+    "total_auditors": 0,
+    "present_auditors": 0,
+    "notice_note": null
+  },
+  "directors": [
+    {
+      "name": "서재람",
+      "hanja": "徐在藍",
+      "role": "사내이사",
+      "title": "대표이사",
+      "present": true,
+      "mode": "원격",
+      "absence_reason": null
+    },
+    {
+      "name": "남태범",
+      "hanja": "南泰範",
+      "role": "사내이사",
+      "title": "각자대표이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    },
+    {
+      "name": "손은숙",
+      "hanja": "孫恩淑",
+      "role": "기타비상무이사",
+      "title": "이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    },
+    {
+      "name": "신현",
+      "hanja": "申賢",
+      "role": "사내이사",
+      "title": "이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    },
+    {
+      "name": "성선호",
+      "hanja": "成善浩",
+      "role": "사외이사",
+      "title": "이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    }
+  ],
+  "auditors": [],
+  "reports": [
+    "2019년 정보보호 점검 결과 보고"
+  ],
+  "agenda": [
+    {
+      "index": 1,
+      "kind": "financial_statements",
+      "title": "제24기(2018. 1. 1. ~ 2018. 12. 31.) 재무제표 및 영업보고서 승인의 건",
+      "facts": {
+        "term_no": 24,
+        "fiscal_year": 2018,
+        "assets": 1296245000000,
+        "liabilities": 720377000000,
+        "equity": 575868000000,
+        "revenue": 347085000000,
+        "operating_income": 30543000000,
+        "net_income": 21000000000
+      },
+      "vote": {
+        "eligible": 5,
+        "present": 5,
+        "favor": 5,
+        "against": 0,
+        "abstain": 0,
+        "result": "원안가결",
+        "unanimous": true,
+        "excluded_director": null
+      }
+    },
+    {
+      "index": 2,
+      "kind": "third_party_issue",
+      "title": "신주발행(제3자배정 유상증자)의 건",
+      "facts": {
+        "new_shares": 1022000,
+        "issue_price": 10000,
+        "total_amount": 10220000000,
+        "share_class": "기명식 보통주식",
+        "payment_date": "2019-01-26",
+        "allottees": [
+          {
+            "name": "블루소재 주식회사",
+            "shares": 1022000,
+            "amount": 10220000000
+          }
+        ]
+      },
+      "vote": {
+        "eligible": 5,
+        "present": 5,
+        "favor": 5,
+        "against": 0,
+        "abstain": 0,
+        "result": "수정가결",
+        "unanimous": true,
+        "excluded_director": null
+      }
+    }
+  ],
+  "signers": [
+    {
+      "name": "서재람",
+      "title": "대표이사",
+      "seal": {
+        "text": "代表理事之印",
+        "shape": "circle",
+        "kind": "직인"
+      }
+    },
+    {
+      "name": "남태범",
+      "title": "각자대표이사",
+      "seal": {
+        "text": "남태범之印",
+        "shape": "rounded",
+        "kind": "성명인"
+      }
+    },
+    {
+      "name": "손은숙",
+      "title": "이사",
+      "seal": {
+        "text": "손은숙印",
+        "shape": "square",
+        "kind": "성명인"
+      }
+    },
+    {
+      "name": "신현",
+      "title": "이사",
+      "seal": {
+        "text": "신현",
+        "shape": "rounded",
+        "kind": "성명인"
+      }
+    },
+    {
+      "name": "성선호",
+      "title": "이사",
+      "seal": {
+        "text": "理事之印",
+        "shape": "circle",
+        "kind": "직인"
+      }
+    }
+  ],
+  "seals": {
+    "enabled": true,
+    "mark": "(인)",
+    "paging_seal": null,
+    "corner_stamp": "대 조 필"
+  },
+  "attachments": [
+    "감정평가서 사본 1부",
+    "여신거래약정서(안) 1부"
+  ],
+  "style": {
+    "ending": "yeoss",
+    "date_format": "korean",
+    "money_format": "plain",
+    "agenda_label": "num",
+    "attendance_layout": "both",
+    "company_suffix": "주식회사",
+    "seal_mark": "(인)",
+    "use_hanja_names": false,
+    "use_hanja_title": false,
+    "time_format": "korean",
+    "numbering": "hangul",
+    "font_family": "gothic",
+    "font_size": 10.5,
+    "leading_ratio": 1.45,
+    "text_align": "justify",
+    "page_border": false,
+    "title_underline": true
+  },
+  "seed": 1001,
+  "scan": {
+    "dpi": 150,
+    "rotate": -1.4288771737582022,
+    "blotches": 2,
+    "fold": 2,
+    "blur": 0.4424076834853528,
+    "contrast": 1.2879654665694829,
+    "brightness": 0.866133866639654,
+    "noise": 8.075721322017154,
+    "speckle": 154,
+    "border": 0,
+    "profile": "photocopy",
+    "pages": 2
+  }
+}

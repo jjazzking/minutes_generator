@@ -1,0 +1,201 @@
+{
+  "company": {
+    "name": "그린엔지니어링 주식회사",
+    "plain_name": "그린엔지니어링",
+    "address": "경기도 부천시 과학로 50, 27층 315호",
+    "par_value": 100,
+    "shares_issued": 2600000,
+    "capital": 260000000,
+    "authorized_shares": 26000000,
+    "business": [
+      "전자상거래업",
+      "물류창고 임대업",
+      "식품 제조 및 가공업"
+    ]
+  },
+  "meeting": {
+    "title": "이 사 회 의 사 록",
+    "kind": "임시",
+    "date": "2024-03-20",
+    "start_time": "10:20",
+    "end_time": "10:45",
+    "place": "경기도 부천시 과학로 50, 27층 315호 서울사무소 회의실",
+    "chair": {
+      "name": "주서현",
+      "title": "대표이사"
+    },
+    "secretary": "안진람",
+    "total_directors": 6,
+    "present_directors": 4,
+    "total_auditors": 2,
+    "present_auditors": 2,
+    "notice_note": null
+  },
+  "directors": [
+    {
+      "name": "주서현",
+      "hanja": "朱瑞賢",
+      "role": "사내이사",
+      "title": "대표이사",
+      "present": true,
+      "mode": "원격",
+      "absence_reason": null
+    },
+    {
+      "name": "강준빈",
+      "hanja": "姜俊彬",
+      "role": "사내이사",
+      "title": "각자대표이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    },
+    {
+      "name": "송현준",
+      "hanja": "宋賢俊",
+      "role": "사내이사",
+      "title": "이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    },
+    {
+      "name": "윤예진",
+      "hanja": "尹睿鎭",
+      "role": "사내이사",
+      "title": "이사",
+      "present": false,
+      "mode": "불참",
+      "absence_reason": "사전 통보 후 불참"
+    },
+    {
+      "name": "김현희",
+      "hanja": "金賢姬",
+      "role": "사외이사",
+      "title": "이사",
+      "present": false,
+      "mode": "불참",
+      "absence_reason": "해외 출장"
+    },
+    {
+      "name": "홍선철",
+      "hanja": "洪善哲",
+      "role": "사내이사",
+      "title": "이사",
+      "present": true,
+      "mode": "원격",
+      "absence_reason": null
+    }
+  ],
+  "auditors": [
+    {
+      "name": "배민웅",
+      "role": "감사",
+      "title": "감사",
+      "present": true
+    },
+    {
+      "name": "임빈",
+      "role": "감사",
+      "title": "상근감사",
+      "present": true
+    }
+  ],
+  "reports": [
+    "내부회계관리제도 운영실태 보고"
+  ],
+  "agenda": [
+    {
+      "index": 1,
+      "kind": "branch",
+      "title": "사무소 폐지의 건",
+      "facts": {
+        "action": "폐지",
+        "branch_name": "천안사무소",
+        "address": "대전광역시 대덕구 대왕판교로 311",
+        "effective_date": "2024-04-07"
+      },
+      "vote": {
+        "eligible": 6,
+        "present": 4,
+        "favor": 3,
+        "against": 0,
+        "abstain": 1,
+        "result": "원안가결",
+        "unanimous": false,
+        "excluded_director": null
+      }
+    }
+  ],
+  "signers": [
+    {
+      "name": "주서현",
+      "title": "대표이사",
+      "seal": null
+    },
+    {
+      "name": "강준빈",
+      "title": "각자대표이사",
+      "seal": null
+    },
+    {
+      "name": "송현준",
+      "title": "이사",
+      "seal": null
+    },
+    {
+      "name": "홍선철",
+      "title": "이사",
+      "seal": null
+    },
+    {
+      "name": "배민웅",
+      "title": "감사",
+      "seal": null
+    },
+    {
+      "name": "임빈",
+      "title": "상근감사",
+      "seal": null
+    }
+  ],
+  "seals": {
+    "enabled": false,
+    "mark": "(印)",
+    "paging_seal": null,
+    "corner_stamp": null
+  },
+  "attachments": [],
+  "style": {
+    "ending": "yeoss",
+    "date_format": "dotted_pad",
+    "money_format": "paren_hangul",
+    "agenda_label": "uian",
+    "attendance_layout": "roster",
+    "company_suffix": "주식회사",
+    "seal_mark": "(印)",
+    "use_hanja_names": false,
+    "use_hanja_title": false,
+    "time_format": "korean",
+    "numbering": "arabic",
+    "font_family": "myeongjo",
+    "font_size": 10.5,
+    "leading_ratio": 1.8,
+    "text_align": "justify",
+    "page_border": false,
+    "title_underline": false
+  },
+  "seed": 1002,
+  "scan": {
+    "dpi": 150,
+    "rotate": 0.7545484888908924,
+    "resample": 0.6044418140846083,
+    "blur": 0.6067375086436662,
+    "contrast": 1.4311484413096205,
+    "bitonal": 155,
+    "speckle": 273,
+    "streaks": 2,
+    "profile": "fax",
+    "pages": 2
+  }
+}

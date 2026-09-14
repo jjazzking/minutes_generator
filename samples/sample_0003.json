@@ -1,0 +1,216 @@
+{
+  "company": {
+    "name": "델타F&B 주식회사",
+    "plain_name": "델타F&B",
+    "address": "경기도 평택시 과학로 463, 30층 1588호",
+    "par_value": 500,
+    "shares_issued": 158000,
+    "capital": 79000000,
+    "authorized_shares": 3160000,
+    "business": [
+      "폐기물 재활용업",
+      "반도체 장비 부품 제조업"
+    ]
+  },
+  "meeting": {
+    "title": "이 사 회  의 사 록",
+    "kind": "임시",
+    "date": "2021-07-17",
+    "start_time": "14:40",
+    "end_time": "15:55",
+    "place": "경기도 평택시 과학로 463, 30층 1588호 연구소 대회의실",
+    "chair": {
+      "name": "장명태",
+      "title": "대표이사"
+    },
+    "secretary": null,
+    "total_directors": 5,
+    "present_directors": 3,
+    "total_auditors": 1,
+    "present_auditors": 1,
+    "notice_note": null
+  },
+  "directors": [
+    {
+      "name": "장명태",
+      "hanja": "張明泰",
+      "role": "사내이사",
+      "title": "대표이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    },
+    {
+      "name": "안찬영",
+      "hanja": "安燦榮",
+      "role": "사외이사",
+      "title": "이사",
+      "present": false,
+      "mode": "불참",
+      "absence_reason": "국내 출장"
+    },
+    {
+      "name": "손병정",
+      "hanja": "孫炳貞",
+      "role": "사외이사",
+      "title": "이사",
+      "present": true,
+      "mode": "원격",
+      "absence_reason": null
+    },
+    {
+      "name": "조다민",
+      "hanja": "趙多敏",
+      "role": "기타비상무이사",
+      "title": "이사",
+      "present": false,
+      "mode": "불참",
+      "absence_reason": "질병 치료"
+    },
+    {
+      "name": "송준미",
+      "hanja": "宋俊美",
+      "role": "사외이사",
+      "title": "이사",
+      "present": true,
+      "mode": "출석",
+      "absence_reason": null
+    }
+  ],
+  "auditors": [
+    {
+      "name": "홍윤웅",
+      "role": "감사",
+      "title": "상근감사",
+      "present": true
+    }
+  ],
+  "reports": [
+    "3분기 경영실적 보고"
+  ],
+  "agenda": [
+    {
+      "index": 1,
+      "kind": "head_office_move",
+      "title": "본점 이전의 건",
+      "facts": {
+        "new_address": "경상북도 포항시 남구 중앙로 427",
+        "effective_date": "2021-08-12",
+        "requires_articles_change": true
+      },
+      "vote": {
+        "eligible": 5,
+        "present": 3,
+        "favor": 3,
+        "against": 0,
+        "abstain": 0,
+        "result": "원안가결",
+        "unanimous": true,
+        "excluded_director": null
+      }
+    },
+    {
+      "index": 2,
+      "kind": "real_estate",
+      "title": "부동산 취득의 건",
+      "facts": {
+        "action": "취득",
+        "address": "강원특별자치도 강릉시 디지털로 548",
+        "area_sqm": 4912.02,
+        "area_pyeong": 1485.89,
+        "price": 2460000000,
+        "contract_date": "2021-07-21",
+        "balance_date": "2021-09-04"
+      },
+      "vote": {
+        "eligible": 5,
+        "present": 3,
+        "favor": 3,
+        "against": 0,
+        "abstain": 0,
+        "result": "원안가결",
+        "unanimous": true,
+        "excluded_director": null
+      }
+    }
+  ],
+  "signers": [
+    {
+      "name": "장명태",
+      "title": "대표이사",
+      "seal": {
+        "text": "장명태印",
+        "shape": "circle",
+        "kind": "성명인"
+      }
+    },
+    {
+      "name": "손병정",
+      "title": "이사",
+      "seal": {
+        "text": "손병정印",
+        "shape": "circle",
+        "kind": "성명인"
+      }
+    },
+    {
+      "name": "송준미",
+      "title": "이사",
+      "seal": {
+        "text": "송준미印",
+        "shape": "circle",
+        "kind": "성명인"
+      }
+    },
+    {
+      "name": "홍윤웅",
+      "title": "상근감사",
+      "seal": {
+        "text": "홍윤웅",
+        "shape": "circle",
+        "kind": "성명인"
+      }
+    }
+  ],
+  "seals": {
+    "enabled": true,
+    "mark": "(인)",
+    "paging_seal": "代表理事之印",
+    "corner_stamp": "대 조 필"
+  },
+  "attachments": [],
+  "style": {
+    "ending": "yeoss",
+    "date_format": "korean",
+    "money_format": "plain",
+    "agenda_label": "ho",
+    "attendance_layout": "inline",
+    "company_suffix": "주식회사",
+    "seal_mark": "(인)",
+    "use_hanja_names": false,
+    "use_hanja_title": false,
+    "time_format": "colon",
+    "numbering": "arabic",
+    "font_family": "gothic",
+    "font_size": 10.5,
+    "leading_ratio": 1.55,
+    "text_align": "left",
+    "page_border": false,
+    "title_underline": false
+  },
+  "seed": 1003,
+  "scan": {
+    "dpi": 150,
+    "rotate": 1.6338147200214304,
+    "blotches": 3,
+    "fold": 0,
+    "blur": 0.7938644864032067,
+    "contrast": 1.1994548503833162,
+    "brightness": 0.9278452571609951,
+    "noise": 8.714113735222654,
+    "speckle": 195,
+    "border": 0,
+    "profile": "photocopy",
+    "pages": 2
+  }
+}
