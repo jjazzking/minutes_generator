@@ -2,3 +2,8 @@ __pycache__/
 *.pyc
 /out/
 .venv/
+
+# 동봉 글꼴은 커밋한다. 다만 reportlab 이 못 읽는 CFF 글꼴이
+# 실수로 들어오는 것은 막는다 (fonts/README.md 참고).
+fonts/*.otf
+fonts/*.ttc

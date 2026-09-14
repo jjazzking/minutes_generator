@@ -59,7 +59,16 @@ def _register_file(path: str, index: int) -> str:
     key = (path, index)
     if key not in _REGISTERED:
         name = f"MG{len(_REGISTERED)}"
-        pdfmetrics.registerFont(TTFont(name, path, subfontIndex=index))
+        try:
+            pdfmetrics.registerFont(TTFont(name, path, subfontIndex=index))
+        except Exception as exc:            # noqa: BLE001 — TTFError 등
+            # fonts.find_* 가 truetype_only 로 걸러 주므로 보통은 오지 않는다.
+            # 그래도 깨진 글꼴 파일을 만나면 원인을 알 수 있게 바꿔서 올린다.
+            raise PdfUnavailable(
+                f"글꼴을 읽지 못했습니다: {path}\n"
+                f"  {exc}\n"
+                "TrueType(.ttf) 한글 글꼴을 환경변수 MINUTES_FONT_GOTHIC 에 지정하세요."
+            ) from exc
         _REGISTERED[key] = name
     return _REGISTERED[key]
 
@@ -72,15 +81,18 @@ def _register(family: str, required: str = "") -> Tuple[str, str]:
     """
     from reportlab.pdfbase import pdfmetrics
 
-    regular = fonts.find_font_for(family, required)
+    # reportlab 은 TrueType 아웃라인만 읽는다. truetype_only 로 CFF 글꼴
+    # (macOS 의 AppleSDGothicNeo.ttc, Noto CJK .otf 등)을 미리 걸러낸다.
+    regular = fonts.find_font_for(family, required, truetype_only=True)
     if not regular:
         raise PdfUnavailable(
-            "한글 글꼴을 찾지 못했습니다. 나눔고딕 등을 설치하거나 "
-            "환경변수 MINUTES_FONT_GOTHIC 에 .ttf 경로를 지정하세요."
+            "PDF에 쓸 수 있는 한글 글꼴을 찾지 못했습니다. 나눔고딕 등 "
+            "TrueType(.ttf) 글꼴을 설치하거나 환경변수 MINUTES_FONT_GOTHIC 에 "
+            ".ttf 경로를 지정하세요. (설치 상태는 --check-fonts 로 볼 수 있습니다)"
         )
     name = _register_file(*regular)
 
-    bold = fonts.find_bold_for(family, required)
+    bold = fonts.find_bold_for(family, required, truetype_only=True)
     bold_name = _register_file(*bold) if bold else name
     pdfmetrics.registerFontFamily(name, normal=name, bold=bold_name)
     return name, bold_name
