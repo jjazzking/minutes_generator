@@ -13,7 +13,23 @@ from typing import List, Optional, Tuple
 # (경로, TTC 내부 글꼴 번호)
 Candidate = Tuple[str, int]
 
-GOTHIC_CANDIDATES: List[Candidate] = [
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
+#: 저장소에 동봉한 글꼴을 두는 곳. 운영체제 기본 글꼴보다 먼저 본다.
+#: 여기 글꼴이 있으면 어느 OS에서 돌려도 결과가 같고 PDF에 임베드된다.
+BUNDLED_DIRS = [
+    os.path.join(_HERE, "fonts"),                    # 패키지 안
+    os.path.join(os.path.dirname(_HERE), "fonts"),   # 저장소 루트
+]
+
+
+def _bundled(*names: str) -> List[Candidate]:
+    return [(os.path.join(d, n), 0) for n in names for d in BUNDLED_DIRS]
+
+
+GOTHIC_CANDIDATES: List[Candidate] = _bundled(
+    "NanumGothic.ttf", "NotoSansKR-Regular.ttf",
+) + [
     # Windows
     ("C:/Windows/Fonts/malgun.ttf", 0),          # 맑은 고딕
     ("C:/Windows/Fonts/NanumGothic.ttf", 0),
@@ -33,7 +49,9 @@ GOTHIC_CANDIDATES: List[Candidate] = [
     ("/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc", 1),
 ]
 
-MYEONGJO_CANDIDATES: List[Candidate] = [
+MYEONGJO_CANDIDATES: List[Candidate] = _bundled(
+    "NanumMyeongjo.ttf", "NotoSerifKR-Regular.ttf",
+) + [
     # Windows
     ("C:/Windows/Fonts/batang.ttc", 0),          # 바탕
     ("C:/Windows/Fonts/gungsuh.ttc", 0),         # 궁서
@@ -155,13 +173,13 @@ def find_bold(family: str = "gothic",
     if env and _acceptable(env, 0, truetype_only):
         return env, 0
     bold_tables = {
-        "gothic": [
+        "gothic": _bundled("NanumGothicBold.ttf", "NotoSansKR-Bold.ttf") + [
             ("C:/Windows/Fonts/malgunbd.ttf", 0),
             ("/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf", 0),
             ("/usr/share/fonts/truetype/nanum/NanumBarunGothicBold.ttf", 0),
             ("/Library/Fonts/NanumGothicBold.ttf", 0),
         ],
-        "myeongjo": [
+        "myeongjo": _bundled("NanumMyeongjoBold.ttf", "NotoSerifKR-Bold.ttf") + [
             ("/usr/share/fonts/truetype/nanum/NanumMyeongjoBold.ttf", 0),
             ("/Library/Fonts/NanumMyeongjoBold.ttf", 0),
             ("C:/Windows/Fonts/batangb.ttc", 0),
