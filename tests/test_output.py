@@ -24,7 +24,7 @@ except ImportError:
 
 from minutes_generator import fonts
 
-HAS_FONT = fonts.find_font("gothic") is not None
+HAS_FONT = fonts.find_font("gothic", truetype_only=True) is not None
 
 
 class HtmlTest(unittest.TestCase):

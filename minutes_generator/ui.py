@@ -93,10 +93,13 @@ def pdf_status() -> Dict[str, object]:
     except ImportError:
         return {"ok": False, "reason": "reportlab 이 설치되어 있지 않습니다.",
                 "fix": "pip install reportlab"}
-    hit = fonts.find_font("gothic")
+    # reportlab 이 실제로 읽을 수 있는 글꼴만 본다. 그러지 않으면 CFF 글꼴을
+    # "사용 가능" 이라고 알린 뒤 내려받기에서 TTFError 로 터진다.
+    hit = fonts.find_font("gothic", truetype_only=True)
     if not hit:
-        return {"ok": False, "reason": "한글 글꼴을 찾지 못했습니다.",
-                "fix": "나눔고딕을 설치하거나 MINUTES_FONT_GOTHIC 환경변수를 지정하세요."}
+        return {"ok": False, "reason": "PDF 에 쓸 수 있는 한글 글꼴이 없습니다.",
+                "fix": "나눔고딕 등 TrueType(.ttf) 글꼴을 설치하거나 "
+                       "MINUTES_FONT_GOTHIC 환경변수를 지정하세요."}
     return {"ok": True, "reportlab": version, "font": os.path.basename(hit[0])}
 
 
@@ -171,6 +174,11 @@ class Handler(BaseHTTPRequestHandler):
 
     def _download(self, params):
         fmt = _one(params, "fmt", "pdf")
+        profile = _one(params, "scan", "clean")
+        if fmt == "view":
+            # 미리보기에 보이는 것을 그대로 준다.
+            # 깨끗한 원본이면 원본 PDF, 노이즈를 골랐으면 그 스캔본.
+            fmt = "pdf" if profile in (None, "clean") else "scan_pdf"
         seed, minutes = _make(params)
         stem = f"minutes_{seed}"
         if fmt == "txt":
@@ -419,15 +427,19 @@ PAGE = r"""<!doctype html>
 
     <h2>이 문서 내려받기</h2>
     <div class="stack">
-      <button class="wide" data-dl="pdf" id="dlpdf">PDF</button>
+      <button class="wide primary" data-dl="view" id="dlview">지금 보이는 문서 (PDF)</button>
+      <button class="wide" data-dl="pdf" id="dlpdf">깨끗한 원본 (PDF)</button>
       <button class="wide" data-dl="txt">텍스트 (.txt)</button>
       <button class="wide" data-dl="json">정답셋 (.json)</button>
       <button class="wide" data-dl="html">HTML</button>
       <button class="wide" data-dl="scan_pdf" id="dlscanpdf">스캔본 (PDF)</button>
       <button class="wide" data-dl="scan_png" id="dlscanpng">스캔본 1쪽 (PNG)</button>
     </div>
-    <p class="hint">스캔본은 위에서 고른 노이즈를 쓴다.
-      노이즈가 "깨끗한 원본" 이면 사무실 스캔으로 만든다.</p>
+    <p class="hint">맨 위 버튼은 미리보기에 보이는 것을 그대로 준다.
+      노이즈를 골랐으면 그 스캔본, "깨끗한 원본" 이면 원본 PDF 다.
+      미리보기는 빠르게 보여 주려고 해상도를 낮추므로, 내려받는 파일이 더 선명하다.</p>
+    <p class="hint">아래 스캔본 버튼은 노이즈가 "깨끗한 원본" 이어도
+      사무실 스캔으로 만든다. 만드는 데 몇 초 걸린다.</p>
 
     <h2>여러 건 한꺼번에</h2>
     <label for="count">개수</label>
@@ -499,6 +511,7 @@ async function boot() {
     chip.className = 'chip bad';
     chip.textContent = 'PDF 불가 · ' + status.pdf.reason + ' → ' + status.pdf.fix;
     $('dlpdf').disabled = true;
+    $('dlview').disabled = true;
     document.querySelector('.bf[value=pdf]').checked = false;
     document.querySelector('.bf[value=pdf]').disabled = true;
   }
@@ -537,15 +550,53 @@ $('clearkinds').onclick = () => {
   document.querySelectorAll('#kinds input').forEach(i => i.checked = false);
   refresh();
 };
+function filenameFrom(header) {
+  if (!header) return null;
+  const star = /filename\*=UTF-8''([^;]+)/i.exec(header);
+  if (star) { try { return decodeURIComponent(star[1]); } catch (e) { return star[1]; } }
+  const plain = /filename="?([^";]+)"?/i.exec(header);
+  return plain ? plain[1] : null;
+}
+
+// window.location 으로 바로 넘기면 만드는 데 몇 초 걸리는 스캔본은 아무 반응이
+// 없어 보이고, 서버가 실패하면 JSON 오류 화면으로 넘어가 UI 를 잃는다.
+// 받아서 blob 으로 저장하면 진행 상태를 보여 주고 실패해도 화면이 그대로 남는다.
+async function download(url, btn, fallbackName) {
+  const label = btn ? btn.textContent : null;
+  if (btn) { btn.disabled = true; btn.textContent = '만드는 중…'; }
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      let msg = 'HTTP ' + res.status;
+      try { const j = await res.json(); if (j && j.error) msg = j.error; } catch (e) {}
+      alert('내려받지 못했습니다.\n\n' + msg);
+      return;
+    }
+    const blob = await res.blob();
+    const href = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = href;
+    a.download = filenameFrom(res.headers.get('Content-Disposition')) || fallbackName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(href), 30000);
+  } catch (err) {
+    alert('내려받지 못했습니다.\n\n' + err);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = label; }
+  }
+}
+
 document.querySelectorAll('[data-dl]').forEach(btn => {
-  btn.onclick = () => {
-    window.location = '/download?' + query({ fmt: btn.dataset.dl });
-  };
+  btn.onclick = () => download('/download?' + query({ fmt: btn.dataset.dl }),
+                               btn, 'minutes_' + ($('seed').value || '0'));
 });
 $('zip').onclick = () => {
   const formats = [...document.querySelectorAll('.bf:checked')].map(i => i.value);
   if (!formats.length) { alert('형식을 하나 이상 고르세요.'); return; }
-  window.location = '/batch?' + query({ count: $('count').value, formats: formats.join(',') });
+  download('/batch?' + query({ count: $('count').value, formats: formats.join(',') }),
+           $('zip'), 'minutes.zip');
 };
 $('print').onclick = () => {
   const f = $('frame');
